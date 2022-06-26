@@ -1,0 +1,31 @@
+{#include base}
+{#title}Registration{/title}
+{#body}
+<div>
+    <p>Welcome to registration</p>
+    <p>Flow: {flow}</p>
+    <div>{message}</div>
+    <div>
+        <form action="{action}" method="POST">
+            {#for field in fields}
+            {#if field.name is 'csrf_token'}
+            <input type="hidden" name="csrf_token" value="{field.value}">
+            {#else}
+            <div>
+                <label for="{field.id}">{field.name}</label>
+                <input type="{field.type}" name="{field.name}" id="{field.id}">
+                {#if field.message}
+                <div>{field.message}</div>
+                {/if}
+            </div>
+            {/if}
+            {/for}
+            <button type="submit">Sign up for cookies</button>
+        </form>
+    </div>
+    <div>
+        <a href="/">Go home</a>
+    </div>
+</div>
+{/body}
+{/include}
