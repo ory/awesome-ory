@@ -3,7 +3,7 @@
 
 blank_issues_enabled: false
 contact_links:
-  - name: Ory Examples Forum
+  - name: Ory Awesome Ory Forum
     url: https://github.com/orgs/ory/discussions
     about: Please ask and answer questions here, show your implementations and
       discuss ideas.

@@ -1,4 +1,7 @@
-# Contribute to Ory $PROJECT<!-- omit in toc -->
+<!-- AUTO-GENERATED, DO NOT EDIT! -->
+<!-- Please edit the original at https://github.com/ory/meta/blob/master/templates/repository/common/CONTRIBUTING.md -->
+
+# Contribute to Ory Awesome Ory<!-- omit in toc -->
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -7,7 +10,7 @@
 - [FAQ](#faq)
 - [How can I contribute?](#how-can-i-contribute)
 - [Communication](#communication)
-- [Contribute examples](#contribute-examples)
+- [Contribute examples or community projects](#contribute-examples-or-community-projects)
 - [Contribute code](#contribute-code)
 - [Contribute documentation](#contribute-documentation)
 - [Disclosing vulnerabilities](#disclosing-vulnerabilities)
@@ -19,8 +22,8 @@
 
 ## Introduction
 
-_Please note_: We take Ory $PROJECT's security and our users' trust very
-seriously. If you believe you have found a security issue in Ory $PROJECT,
+_Please note_: We take Ory Awesome Ory's security and our users' trust very
+seriously. If you believe you have found a security issue in Ory Awesome Ory,
 please disclose it by contacting us at security@ory.sh.
 
 There are many ways in which you can contribute. The goal of this document is to
@@ -38,44 +41,44 @@ contributions and don't want a wall of rules to get in the way of that.
 That said, if you want to ensure that a pull request is likely to be merged,
 talk to us! You can find out our thoughts and ensure that your contribution
 won't clash with Ory
-$PROJECT's direction. A great way to
+Awesome Ory's direction. A great way to
 do this is via
-[Ory $PROJECT Discussions]($DISCUSSIONS)
+[Ory Awesome Ory Discussions](https://github.com/orgs/ory/discussions)
 or the [Ory Chat](https://www.ory.sh/chat).
 
 ## FAQ
 
 - I am new to the community. Where can I find the
-  [Ory Community Code of Conduct?](https://github.com/$REPOSITORY/blob/master/CODE_OF_CONDUCT.md)
+  [Ory Community Code of Conduct?](https://github.com/ory/awesome-ory/blob/master/CODE_OF_CONDUCT.md)
 
 - I have a question. Where can I get
-  [answers to questions regarding Ory $PROJECT?](#communication)
+  [answers to questions regarding Ory Awesome Ory?](#communication)
 
 - I would like to contribute but I am not sure how. Are there
   [easy ways to contribute?](#how-can-i-contribute)
   [Or good first issues?](https://github.com/search?l=&o=desc&q=label%3A%22help+wanted%22+label%3A%22good+first+issue%22+is%3Aopen+user%3Aory+user%3Aory-corp&s=updated&type=Issues)
 
-- I want to talk to other Ory $PROJECT users.
+- I want to talk to other Ory Awesome Ory users.
   [How can I become a part of the community?](#communication)
 
 - I would like to know what I am agreeing to when I contribute to Ory
-  $PROJECT.
+  Awesome Ory.
   Does Ory have
-  [a Contributors License Agreement?](https://cla-assistant.io/$REPOSITORY)
+  [a Contributors License Agreement?](https://cla-assistant.io/ory/awesome-ory)
 
-- I would like updates about new versions of Ory $PROJECT.
+- I would like updates about new versions of Ory Awesome Ory.
   [How are new releases announced?](https://www.ory.sh/l/sign-up-newsletter)
 
 ## How can I contribute?
 
 If you want to start to contribute code right away, take a look at the
-[list of good first issues](https://github.com/$REPOSITORY/labels/good%20first%20issue).
+[list of good first issues](https://github.com/ory/awesome-ory/labels/good%20first%20issue).
 
 There are many other ways you can contribute. Here are a few things you can do
 to help out:
 
 - **Give us a star.** It may not seem like much, but it really makes a
-  difference. This is something that everyone can do to help out Ory $PROJECT.
+  difference. This is something that everyone can do to help out Ory Awesome Ory.
   Github stars help the project gain visibility and stand out.
 
 - **Join the community.** Sometimes helping people can be as easy as listening
@@ -90,7 +93,7 @@ to help out:
   help, please share it! Bonus: You get GitHub achievements for answered
   discussions.
 
-- **Help with open issues.** We have a lot of open issues for Ory $PROJECT and
+- **Help with open issues.** We have a lot of open issues for Ory Awesome Ory and
   some of them may lack necessary information, some are duplicates of older
   issues. You can help out by guiding people through the process of filling out
   the issue template, asking for clarifying information or pointing them to
@@ -109,34 +112,35 @@ to help out:
 We use [Slack](https://www.ory.sh/chat). You are welcome to drop in and ask
 questions, discuss bugs and feature requests, talk to other users of Ory, etc.
 
-Check out [Ory $PROJECT Discussions]($DISCUSSIONS). This is a great place for
+Check out [Ory Awesome Ory Discussions](https://github.com/orgs/ory/discussions). This is a great place for
 in-depth discussions and lots of code examples, logs and similar data.
 
 You can also join our community calls if you want to speak to the Ory team
 directly or ask some questions. You can find more info and participate in
 [Slack](https://www.ory.sh/chat) in the #community-call channel.
 
-If you want to receive regular notifications about updates to Ory $PROJECT,
+If you want to receive regular notifications about updates to Ory Awesome Ory,
 consider joining the mailing list. We will _only_ send you vital information on
 the projects that you are interested in.
 
 Also, [follow us on Twitter](https://twitter.com/orycorp).
 
-## Contribute example or community projects
+## Contribute examples or community projects
 
-One of the most impactful ways to contribute is by adding code examples or other Ory-related code.
-You can find an overview of community code in the [awesome-ory](https://github.com/ory/awesome-ory) repository.
+One of the most impactful ways to contribute is by adding code examples or other
+Ory-related code. You can find an overview of community code in the
+[awesome-ory](https://github.com/ory/awesome-ory) repository.
 
 _If you would like to contribute a new example, we would love to hear from you!_
 
-Please [open a pull request at awesome-ory](https://github.com/ory/awesome-ory/) to
-add your example or Ory-related project to the awesome-ory README.
+Please [open a pull request at awesome-ory](https://github.com/ory/awesome-ory/)
+to add your example or Ory-related project to the awesome-ory README.
 
 ## Contribute code
 
 Unless you are fixing a known bug, we **strongly** recommend discussing it with
 the core team via a GitHub issue or [in our chat](https://www.ory.sh/chat)
-before getting started to ensure your work is consistent with Ory $PROJECT's
+before getting started to ensure your work is consistent with Ory Awesome Ory's
 roadmap and architecture.
 
 All contributions are made via pull requests. To make a pull request, you will
@@ -154,7 +158,7 @@ request, go through this checklist:
 1. Run `make format`
 1. Add a descriptive prefix to commits. This ensures a uniform commit history
    and helps structure the changelog. Please refer to this
-   [Convential Commits configuration](https://github.com/$REPOSITORY/blob/master/.github/workflows/conventional_commits.yml)
+   [Convential Commits configuration](https://github.com/ory/awesome-ory/blob/master/.github/workflows/conventional_commits.yml)
    for the list of accepted prefixes. You can read more about the Conventional
    Commit specification
    [at their site](https://www.conventionalcommits.org/en/v1.0.0/).
@@ -163,7 +167,7 @@ If a pull request is not ready to be reviewed yet
 [it should be marked as a "Draft"](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/changing-the-stage-of-a-pull-request).
 
 Before your contributions can be reviewed you need to sign our
-[Contributor License Agreement](https://cla-assistant.io/$REPOSITORY).
+[Contributor License Agreement](https://cla-assistant.io/ory/awesome-ory).
 
 This agreement defines the terms under which your code is contributed to Ory.
 More specifically it declares that you have the right to, and actually do, grant
@@ -183,7 +187,7 @@ Pull requests eligible for review
 3. document the changes in the code and/or the project's documentation;
 4. pass the CI pipeline;
 5. have signed our
-   [Contributor License Agreement](https://cla-assistant.io/$REPOSITORY);
+   [Contributor License Agreement](https://cla-assistant.io/ory/awesome-ory);
 6. include a proper git commit message following the
    [Conventional Commit Specification](https://www.conventionalcommits.org/en/v1.0.0/).
 
@@ -214,10 +218,10 @@ Please run `make format` to format all source code following the Ory standard.
 
 ```bash
 # First you clone the original repository
-git clone git@github.com:ory/$REPOSITORY.git
+git clone git@github.com:ory/ory/awesome-ory.git
 
 # Next you add a git remote that is your fork:
-git remote add fork git@github.com:<YOUR-GITHUB-USERNAME-HERE>/$REPOSITORY.git
+git remote add fork git@github.com:<YOUR-GITHUB-USERNAME-HERE>/ory/awesome-ory.git
 
 # Next you fetch the latest changes from origin for master:
 git fetch origin
@@ -242,7 +246,7 @@ Now go to the project's GitHub Pull Request page and click "New pull request"
 Whether you are a regular contributor or a newcomer, we care about making this
 community a safe place for you and we've got your back.
 
-[Ory Community Code of Conduct](https://github.com/$REPOSITORY/blob/master/CODE_OF_CONDUCT.md)
+[Ory Community Code of Conduct](https://github.com/ory/awesome-ory/blob/master/CODE_OF_CONDUCT.md)
 
 We welcome discussion about creating a welcoming, safe, and productive
 environment for the community. If you have any questions, feedback, or concerns
