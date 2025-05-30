@@ -1,0 +1,6 @@
+**/bin
+**/obj
+Dockerfile
+.dockerignore
+**/*.Development.json
+**/*.user

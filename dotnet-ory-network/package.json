@@ -1,0 +1,13 @@
+{
+  "name": "dotnet-ory-network-tests",
+  "version": "0.0.0",
+  "private": "true",
+  "scripts": {
+    "test:debug": "playwright test --debug",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.24.0",
+    "wait-on": "^6.0.1"
+  }
+}

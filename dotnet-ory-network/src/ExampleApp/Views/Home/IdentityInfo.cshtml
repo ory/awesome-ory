@@ -1,0 +1,31 @@
+@* Copyright © 2022 Ory Corp *@
+@* SPDX-License-Identifier: Apache-2.0 *@
+
+@{
+    ViewData["Title"] = "Identity Info";
+}
+
+<div class="content">
+    <h2>You are authenticated</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Claim</th>
+                <th>Value</th>
+                <th>Issuer</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var claim in User.Claims)
+            {
+                <tr>
+                    <td>@claim.Type</td>
+                    <td>@claim.Value</td>
+                    <td>@claim.Issuer</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
