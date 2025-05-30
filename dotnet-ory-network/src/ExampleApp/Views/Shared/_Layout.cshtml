@@ -1,0 +1,88 @@
+@* Copyright © 2022 Ory Corp *@
+@* SPDX-License-Identifier: Apache-2.0 *@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] - ExampleApp</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+
+<body>
+    <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="https://www.ory.sh/">
+                <img src="https://raw.githubusercontent.com/ory/.github/README/img/ory.png">
+            </a>
+        </div>
+
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" asp-area="" asp-controller="Home" asp-action="Index">
+                    Home
+                </a>
+                <a class="navbar-item" asp-area="" asp-controller="Home" asp-action="IdentityInfo">
+                    Identity Info
+                </a>
+            </div>
+
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        @if ( User != null && User.Identity.IsAuthenticated )
+                        {
+                            <a class="button is-white" asp-area="" asp-controller="Home" asp-action="Logout">
+                                Log out
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="button is-link" asp-area="" asp-controller="Home" asp-action="Signup">
+                                <strong>Sign up</strong>
+                            </a>
+                            <a class="button is-white" asp-area="" asp-controller="Home" asp-action="Login">
+                                Log in
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container">
+        <section class="hero">
+            <div class="hero-body">
+                <p class="title">
+                    @ViewData["Title"]
+                </p>
+                @if ( ViewData["Subtitle"] != null )
+                {
+                    <p class="subtitle">
+                        @ViewData["Subtitle"]
+                    </p>
+                }
+            </div>
+        </section>
+        <section class="section">
+            @RenderBody()
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                Dotnet integration example for <a href="https://www.ory.sh/"><strong>Ory Network</strong></a>.
+                The source code is licensed <a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a>.
+            </p>
+        </div>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>
