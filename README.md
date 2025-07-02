@@ -150,7 +150,7 @@ Code examples that show how to integrate Ory with a framework, software stack, o
 - [Ory Kratos Svelte Node example](https://github.com/emrahcom/kratos-selfservice-svelte-node)
 - [Ory Kratos SvelteKit example](https://github.com/bessey/ory-kratos-sveltekit-demo)
 - [Ory Kratos Admin Interface in React example](https://github.com/dfoxg/kratos-admin-ui)
-- [Modern Kratos Admin UI with analytics](https://github.com/dhia-gharsallaoui/kratos-admin-ui)
+- [Ory Kratos Admin Interface with analytics](https://github.com/dhia-gharsallaoui/kratos-admin-ui)
 
 ### Ory Hydra
 
