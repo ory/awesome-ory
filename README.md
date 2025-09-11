@@ -151,6 +151,7 @@ Code examples that show how to integrate Ory with a framework, software stack, o
 - [Ory Kratos SvelteKit example](https://github.com/bessey/ory-kratos-sveltekit-demo)
 - [Ory Kratos Admin Interface in React example](https://github.com/dfoxg/kratos-admin-ui)
 - [Ory Kratos Admin Interface with analytics](https://github.com/dhia-gharsallaoui/kratos-admin-ui)
+- [Ory Kratos SPA Self-service UI written in the Dioxus rust framework (WASM)](https://github.com/justins-engineering/kratos-selfservice-wasm)
 
 ### Ory Hydra
 
@@ -173,6 +174,7 @@ Community projects, configuration tools, or development helpers extending Ory se
 
 - [Ory Kratos Symfony Authenticator](https://github.com/stethome/ory-auth-bundle)
 - [Ory Kratos Loopback4 integration](https://github.com/giuseppegrieco/loopback4-kratos)
+- [Ory Kratos Client Rust WASM](https://github.com/justins-engineering/kratos-client-rust)
 
 ### Ory Hydra
 
