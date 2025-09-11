@@ -1,8 +1,8 @@
-// Copyright © 2023 Ory Corp
+// Copyright © 2025 Ory Corp
 // SPDX-License-Identifier: Apache-2.0
 
-import type { PlaywrightTestConfig } from "@playwright/test"
-import { devices } from "@playwright/test"
+import type { PlaywrightTestConfig } from "@playwright/test";
+import { devices } from "@playwright/test";
 
 /**
  * Read environment variables from file.
@@ -107,6 +107,6 @@ const config: PlaywrightTestConfig = {
   //   command: 'npm run start',
   //   port: 3000,
   // },
-}
+};
 
-export default config
+export default config;

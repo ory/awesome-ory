@@ -74,9 +74,9 @@ Developer resources and forums for discussing Ory and meeting other users
 
 ### Ory blog guest articles
 
-> Are you building something with Ory?  
-> Are you interested in Auth and security topics in general?  
-> Do you want to share your knowledge and experience?  
+> Are you building something with Ory?
+> Are you interested in Auth and security topics in general?
+> Do you want to share your knowledge and experience?
 > [Reach out](mailto:office@ory.sh) to get published in the Ory blog!
 
 - [Deploying Ory Oathkeeper as an AWS Lambda Authorizer](https://www.ory.sh/deploying-ory-oathkeeper-aws-lambda/)
@@ -151,6 +151,7 @@ Code examples that show how to integrate Ory with a framework, software stack, o
 - [Ory Kratos SvelteKit example](https://github.com/bessey/ory-kratos-sveltekit-demo)
 - [Ory Kratos Admin Interface in React example](https://github.com/dfoxg/kratos-admin-ui)
 - [Ory Kratos Admin Interface with analytics](https://github.com/dhia-gharsallaoui/kratos-admin-ui)
+- [Ory Kratos SPA Self-service UI written in the Dioxus rust framework (WASM)](https://github.com/justins-engineering/kratos-selfservice-wasm)
 
 ### Ory Hydra
 
@@ -174,6 +175,7 @@ Community projects, configuration tools, or development helpers extending Ory se
 - [Ory Kratos Symfony Authenticator](https://github.com/stethome/ory-auth-bundle)
 - [Ory Kratos Loopback4 integration](https://github.com/giuseppegrieco/loopback4-kratos)
 - [Ory Kratos read-only traits](https://github.com/lus/kratos-readonly-traits)
+- [Ory Kratos Client Rust WASM](https://github.com/justins-engineering/kratos-client-rust)
 
 ### Ory Hydra
 
