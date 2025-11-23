@@ -1,4 +1,4 @@
-// Copyright © 2023 Ory Corp
+// Copyright © 2025 Ory Corp
 // SPDX-License-Identifier: Apache-2.0
 
 part of 'recovery_bloc.dart';
