@@ -181,7 +181,7 @@ Community projects, configuration tools, or development helpers extending Ory se
 
 - [Ory Hydra Testcontainer](https://github.com/ardetrick/testcontainers-ory-hydra)
 - [Ory Hydra Golang HTTP middleware](https://github.com/ngyewch/hydra-login-consent)
-- [Ory Hydra OAuth2 Token Exchange RFC 8693](https://github.com/Exact-Realty/ts-hydra-rfc8693)
+- [Ory Hydra OAuth2 Token Exchange RFC 8693](https://github.com/ApelegHQ/ts-hydra-rfc8693)
 - [Ory Hydra Terraform Provider](https://github.com/svrakitin/terraform-provider-hydra)
 
 ### Ory Keto
