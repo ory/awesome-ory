@@ -172,6 +172,7 @@ Community projects, configuration tools, or development helpers extending Ory se
 
 ### Ory Kratos
 
+- [Ory Kratos MCP server](https://github.com/feedback-loop-ai/mcp-ory-kratos)
 - [Ory Kratos Symfony Authenticator](https://github.com/stethome/ory-auth-bundle)
 - [Ory Kratos Loopback4 integration](https://github.com/giuseppegrieco/loopback4-kratos)
 - [Ory Kratos read-only traits](https://github.com/lus/kratos-readonly-traits)
