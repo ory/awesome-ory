@@ -180,6 +180,7 @@ Community projects, configuration tools, or development helpers extending Ory se
 
 ### Ory Hydra
 
+- [Ory Hydra ExpressJS OAuth2 Middleware for MCP Servers](https://github.com/jeffdyke/hydra-headless-ts)
 - [Ory Hydra Testcontainer](https://github.com/ardetrick/testcontainers-ory-hydra)
 - [Ory Hydra Golang HTTP middleware](https://github.com/ngyewch/hydra-login-consent)
 - [Ory Hydra OAuth2 Token Exchange RFC 8693](https://github.com/ApelegHQ/ts-hydra-rfc8693)
