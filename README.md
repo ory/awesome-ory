@@ -2,7 +2,7 @@
 
 [<img src="./assets/logo512.png" align="right" width="256">](https://ory.sh/)
 
-An awesome list of the [Ory ecosystem](https://github.com/ory/). Ory provides scalable, flexible, and secure identity and access management (IAM) solutions that empower developers to build innovative applications. Whether you handle billions of users or launch a startup, Ory makes security and compliance simple with open-source transparency and cutting-edge tools.
+An awesome list of the [Ory ecosystem](https://www.ory.com/ory-ecosystem). Ory provides scalable, flexible, and secure identity and access management (IAM) solutions that empower developers to build innovative applications. Whether you handle billions of users or launch a startup, Ory makes security and compliance simple with open-source transparency and cutting-edge tools.
 
 [![Docs](https://img.shields.io/badge/docs-ory.sh-%233B4B6C "Ory Documentation")](https://ory.sh/docs)
 [![Docs](https://img.shields.io/badge/chat-slack.ory.sh-%234B1B6C "Ory Community Slack")](https://slack.ory.sh/)
@@ -48,11 +48,11 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for pointers on how to contribute.
 
 Overview of the main projects in the Ory ecosystem.
 
-- [Ory Network](https://console.ory.com/)
-- [Ory Hydra](https://github.com/ory/hydra)
-- [Ory Kratos](https://github.com/ory/kratos)
-- [Ory Keto](https://github.com/ory/keto)
-- [Ory Oathkeeper](https://github.com/ory/oathkeeper)
+- [Ory Network](https://www.ory.com/network)
+- [Ory Hydra](https://www.ory.com/hydra)
+- [Ory Kratos](https://www.ory.com/kratos)
+- [Ory Keto](https://www.ory.com/keto)
+- [Ory Oathkeeper](https://www.ory.com/oathkeeper)
 - [Ory Fosite](https://github.com/ory/fosite)
 - [Ory Dockertest](https://github.com/ory/dockertest)
 - [Other Ory projects can be found here](https://github.com/ory)
