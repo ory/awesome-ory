@@ -13,7 +13,7 @@ For more information, please refer to
 
 ### Prerequisites
 
-1. [Ory Network Developer project](https://console.ory.sh/)
+1. [Ory Network Developer project](https://console.ory.com/)
 1. [Docker](https://docs.docker.com/get-docker/)
 1. [Ory Oathkeeper](https://www.ory.sh/docs/oathkeeper/install)
 

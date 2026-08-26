@@ -48,7 +48,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for pointers on how to contribute.
 
 Overview of the main projects in the Ory ecosystem.
 
-- [Ory Network](https://console.ory.sh/)
+- [Ory Network](https://console.ory.com/)
 - [Ory Hydra](https://github.com/ory/hydra)
 - [Ory Kratos](https://github.com/ory/kratos)
 - [Ory Keto](https://github.com/ory/keto)
@@ -203,7 +203,7 @@ Community projects, configuration tools, or development helpers extending Ory se
 
 Managed services that run Ory for you
 
-- [Ory Network](https://console.ory.sh) - Self-service managed IAM service operated by Ory
+- [Ory Network](https://console.ory.com) - Self-service managed IAM service operated by Ory
 - [Ory Enterprise License](https://www.ory.sh/docs/self-hosted/oel/quickstart) - Private, compliant, and enterprise-grade version of Ory
 
 ## Postman collections

@@ -10,7 +10,7 @@ login and registration with email and password.
 1. [Flutter](https://docs.flutter.dev/get-started/install) version 3.13.1
 2. Xcode and Android Studio
 3. iOS Simulator or Android Emulator
-4. [Ory Network](https://console.ory.sh/) project
+4. [Ory Network](https://console.ory.com/) project
 
 ### Environmental variables
 
