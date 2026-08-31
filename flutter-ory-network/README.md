@@ -60,7 +60,7 @@ For more information, see
 
 To configure Apple Sign In on IOS, see
 [Apple Integration Docs](https://www.ory.com/docs/kratos/social-signin/apple).\
-To configure Apple Sign In on Android, see [Social sign-in for native and mobile apps ](https://www.ory.com/docs/kratos/social-signin/native-apps).
+To configure Apple Sign In on Android, see [Social sign-in for native and mobile apps](https://www.ory.com/docs/kratos/social-signin/native-apps).
 
 ### Run locally
 
