@@ -130,5 +130,5 @@ feedback or talk about ideas, or
 [open an issue](https://github.com/ory/examples/issues/new) if you want to add
 your example to the repository or encounter a bug. You can contribute to Ory in
 many ways, see the
-[Ory Contributing Guidelines](https://www.ory.sh/docs/ecosystem/contributing)
+[Ory Contributing Guidelines](https://www.ory.com/docs/ecosystem/contributing)
 for more information.

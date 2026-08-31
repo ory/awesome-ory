@@ -54,13 +54,13 @@ information of your iOS Client ID.
 ```
 
 For more information, see
-[Google Integration Docs](https://www.ory.sh/docs/kratos/social-signin/google).
+[Google Integration Docs](https://www.ory.com/docs/kratos/social-signin/google).
 
 ### Apple Sign In
 
 To configure Apple Sign In on IOS, see
-[Apple Integration Docs](https://www.ory.sh/docs/kratos/social-signin/apple).\
-To configure Apple Sign In on Android, see [Social sign-in for native and mobile apps ](https://www.ory.sh/docs/kratos/social-signin/native-apps).
+[Apple Integration Docs](https://www.ory.com/docs/kratos/social-signin/apple).\
+To configure Apple Sign In on Android, see [Social sign-in for native and mobile apps ](https://www.ory.com/docs/kratos/social-signin/native-apps).
 
 ### Run locally
 

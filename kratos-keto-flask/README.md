@@ -1,11 +1,11 @@
 # Flask App using Ory Kratos and Ory Keto
 
-This example integrates [Ory Kratos](https://www.ory.sh/kratos/docs/quickstart/)
-and [Ory Keto](https://www.ory.sh/keto/docs/quickstart/) in a flask application.
+This example integrates [Ory Kratos](https://www.ory.com/kratos/docs/quickstart/)
+and [Ory Keto](https://www.ory.com/keto/docs/quickstart/) in a flask application.
 
 Follow the tutorial based on this code:
 
-- [Securing Your Flask Application Using Kratos and Keto](https://www.ory.sh/securing-flask-application-using-kratos-and-keto/)
+- [Securing Your Flask Application Using Kratos and Keto](https://www.ory.com/securing-flask-application-using-kratos-and-keto/)
 
 ## Overview
 
@@ -21,8 +21,8 @@ server is used.
 
 ### Prerequisites
 
-- [Ory Keto](https://www.ory.sh/docs/keto/install) as an access control service.
-- [Ory Kratos](https://www.ory.sh/docs/kratos/install) with UI to authenticate
+- [Ory Keto](https://www.ory.com/docs/keto/install) as an access control service.
+- [Ory Kratos](https://www.ory.com/docs/kratos/install) with UI to authenticate
   users.
 - [PostgreSQL](https://www.postgresql.org/download/) as an RDBMS.
 - [Flask cookiecutter](https://github.com/cookiecutter-flask/cookiecutter-flask)
@@ -226,5 +226,5 @@ feedback or talk about ideas, or
 [open an issue](https://github.com/ory/examples/issues/new) if you want to add
 your example to the repository or encounter a bug. You can contribute to Ory in
 many ways, see the
-[Ory Contributing Guidelines](https://www.ory.sh/docs/ecosystem/contributing)
+[Ory Contributing Guidelines](https://www.ory.com/docs/ecosystem/contributing)
 for more information.

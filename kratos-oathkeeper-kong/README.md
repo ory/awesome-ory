@@ -5,14 +5,14 @@ Oathkeeper.
 
 Read the tutorial on the Ory blog:
 
-- [Secure microservices with Kong and Ory](https://www.ory.sh/zero-trust-api-security-ory-tutorial/)
+- [Secure microservices with Kong and Ory](https://www.ory.com/zero-trust-api-security-ory-tutorial/)
 
 ## Overview
 
 - A simple Go HTTP API that exposes `/greet` endpoint and listens `:8090` port.
-- [Ory Oathkeeper](https://www.ory.sh/docs/oathkeeper/install) as Zero Trust
+- [Ory Oathkeeper](https://www.ory.com/docs/oathkeeper/install) as Zero Trust
   Identity Access Proxy.
-- [Ory Kratos](https://www.ory.sh/docs/kratos/install) to manage identities and
+- [Ory Kratos](https://www.ory.com/docs/kratos/install) to manage identities and
   users.
 - [Kong](https://konghq.com/install#kong-community) as ingress for incoming HTTP
   traffic.
@@ -73,5 +73,5 @@ feedback or talk about ideas, or
 [open an issue](https://github.com/ory/examples/issues/new) if you want to add
 your example to the repository or encounter a bug. You can contribute to Ory in
 many ways, see the
-[Ory Contributing Guidelines](https://www.ory.sh/docs/ecosystem/contributing)
+[Ory Contributing Guidelines](https://www.ory.com/docs/ecosystem/contributing)
 for more information.
