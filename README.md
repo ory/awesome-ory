@@ -1,13 +1,13 @@
 # Awesome Ory
 
-[<img src="./assets/logo512.png" align="right" width="256">](https://ory.sh/)
+[<img src="./assets/logo512.png" align="right" width="256">](https://ory.com/)
 
-An awesome list of the [Ory ecosystem](https://github.com/ory/). Ory provides scalable, flexible, and secure identity and access management (IAM) solutions that empower developers to build innovative applications. Whether you handle billions of users or launch a startup, Ory makes security and compliance simple with open-source transparency and cutting-edge tools.
+An awesome list of the [Ory ecosystem](https://www.ory.com/ory-ecosystem). Ory provides scalable, flexible, and secure identity and access management (IAM) solutions that empower developers to build innovative applications. Whether you handle billions of users or launch a startup, Ory makes security and compliance simple with open-source transparency and cutting-edge tools.
 
-[![Docs](https://img.shields.io/badge/docs-ory.sh-%233B4B6C "Ory Documentation")](https://ory.sh/docs)
-[![Docs](https://img.shields.io/badge/chat-slack.ory.sh-%234B1B6C "Ory Community Slack")](https://slack.ory.sh/)
+[![Docs](https://img.shields.io/badge/docs-ory.com-%233B4B6C "Ory Documentation")](https://ory.com/docs)
+[![Docs](https://img.shields.io/badge/chat-slack.ory.com-%234B1B6C "Ory Community Slack")](https://slack.ory.com/)
 
-If you have any questions or suggestions [open a discussion](https://github.com/ory/examples/discussions), or join the [Ory Chat](https://slack.ory.sh/)!
+If you have any questions or suggestions [open a discussion](https://github.com/ory/examples/discussions), or join the [Ory Chat](https://slack.ory.com/)!
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for pointers on how to contribute.
 
@@ -48,11 +48,11 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for pointers on how to contribute.
 
 Overview of the main projects in the Ory ecosystem.
 
-- [Ory Network](https://console.ory.sh/)
-- [Ory Hydra](https://github.com/ory/hydra)
-- [Ory Kratos](https://github.com/ory/kratos)
-- [Ory Keto](https://github.com/ory/keto)
-- [Ory Oathkeeper](https://github.com/ory/oathkeeper)
+- [Ory Network](https://www.ory.com/network)
+- [Ory Hydra](https://www.ory.com/hydra)
+- [Ory Kratos](https://www.ory.com/kratos)
+- [Ory Keto](https://www.ory.com/keto)
+- [Ory Oathkeeper](https://www.ory.com/oathkeeper)
 - [Ory Fosite](https://github.com/ory/fosite)
 - [Ory Dockertest](https://github.com/ory/dockertest)
 - [Other Ory projects can be found here](https://github.com/ory)
@@ -61,14 +61,14 @@ Overview of the main projects in the Ory ecosystem.
 
 Developer resources and forums for discussing Ory and meeting other users
 
-- [Ory Documentation](https://www.ory.sh/docs) - Comprehensive documentation for major Ory services
-- [Ory Slack](https://slack.ory.sh) - Slack community for the Ory ecosystem
-- [Ory Archive](https://archive.ory.sh) - Searchable archive of the Ory Slack community
+- [Ory Documentation](https://www.ory.com/docs) - Comprehensive documentation for major Ory services
+- [Ory Slack](https://slack.ory.com) - Slack community for the Ory ecosystem
+- [Ory Archive](https://archive.ory.com) - Searchable archive of the Ory Slack community
 - [GitHub Discussions](https://github.com/discussions?discussions_q=org%3Aory+sort%3Aupdated-desc) - All discussions for Ory services on GitHub
 - [StackOverflow](https://stackoverflow.com/questions/tagged/ory) - StackOverflow questions tagged with `ory`
 - [Twitter](https://twitter.com/orycorp) - Official Ory Twitter account
 
-- Ory Support 👉 [Enterprise-grade support directly from the Ory maintainers](https://ory.sh/contact) ✨
+- Ory Support 👉 [Enterprise-grade support directly from the Ory maintainers](https://ory.com/contact) ✨
 
 ## Blog posts
 
@@ -77,13 +77,13 @@ Developer resources and forums for discussing Ory and meeting other users
 > Are you building something with Ory?
 > Are you interested in Auth and security topics in general?
 > Do you want to share your knowledge and experience?
-> [Reach out](mailto:office@ory.sh) to get published in the Ory blog!
+> [Reach out](mailto:office@ory.com) to get published in the Ory blog!
 
-- [Deploying Ory Oathkeeper as an AWS Lambda Authorizer](https://www.ory.sh/deploying-ory-oathkeeper-aws-lambda/)
-- [Using Ory with Cloudflare Workers](https://www.ory.sh/use-ory-with-cloudflare-workers/)
-- [How I built LoginWithHN using Ory Hydra](https://www.ory.sh/how-to-build-login-with-hacker-news/)
-- [Add Authentication to your Flutter Web Applications with Ory Kratos](https://www.ory.sh/login-flutter-authentication-example-api-open-source/)
-- [Looking at Zanzibar through Ory Keto](https://www.ory.sh/looking-at-keto/)
+- [Deploying Ory Oathkeeper as an AWS Lambda Authorizer](https://www.ory.com/deploying-ory-oathkeeper-aws-lambda/)
+- [Using Ory with Cloudflare Workers](https://www.ory.com/use-ory-with-cloudflare-workers/)
+- [How I built LoginWithHN using Ory Hydra](https://www.ory.com/how-to-build-login-with-hacker-news/)
+- [Add Authentication to your Flutter Web Applications with Ory Kratos](https://www.ory.com/login-flutter-authentication-example-api-open-source/)
+- [Looking at Zanzibar through Ory Keto](https://www.ory.com/looking-at-keto/)
 
 ### Ory ecosystem
 
@@ -203,8 +203,8 @@ Community projects, configuration tools, or development helpers extending Ory se
 
 Managed services that run Ory for you
 
-- [Ory Network](https://console.ory.sh) - Self-service managed IAM service operated by Ory
-- [Ory Enterprise License](https://www.ory.sh/docs/self-hosted/oel/quickstart) - Private, compliant, and enterprise-grade version of Ory
+- [Ory Network](https://console.ory.com) - Self-service managed IAM service operated by Ory
+- [Ory Enterprise License](https://www.ory.com/docs/self-hosted/oel/quickstart) - Private, compliant, and enterprise-grade version of Ory
 
 ## Postman collections
 

@@ -14,4 +14,4 @@
 - [12 - Example using Ory Oathkeeper with cookie session authenticator & header mutator](https://github.com/ory/examples/tree/master/oathkeeper/12-multiple-authenticators)
 
 For more information, please refer to
-[the Ory Oathkeeper documentation](https://www.ory.sh/docs/oathkeeper)
+[the Ory Oathkeeper documentation](https://www.ory.com/docs/oathkeeper)

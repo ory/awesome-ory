@@ -18,7 +18,7 @@ your submission gets accepted, you have the chance for get some exclusive Ory
 Swag!
 
 For more information on Ory Actions please refer to the
-[Ory Documentation](https://www.ory.sh/docs/kratos/hooks/configure-hooks).
+[Ory Documentation](https://www.ory.com/docs/kratos/hooks/configure-hooks).
 
 ## Ory Actions Examples
 
@@ -33,5 +33,5 @@ feedback or talk about ideas, or
 [open an issue](https://github.com/ory/examples/issues/new) if you want to add
 your example to the repository or encounter a bug. You can contribute to Ory in
 many ways, see the
-[Ory Contributing Guidelines](https://www.ory.sh/docs/ecosystem/contributing)
+[Ory Contributing Guidelines](https://www.ory.com/docs/ecosystem/contributing)
 for more information.
