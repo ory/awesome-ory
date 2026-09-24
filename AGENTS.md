@@ -3,6 +3,11 @@
 This file is the standing brief for an agent run against `ory/awesome-ory`. Read
 it before touching anything.
 
+It describes **how to run a maintenance pass** — the contract, the invariants,
+and the traps. It is deliberately not a work list: known follow-ups live in
+[`TODO.md`](TODO.md), so that this file stays true no matter how much of that
+backlog has been done.
+
 ## Scope
 
 **In scope: the example projects that live in this tree.** Keep them building,
@@ -144,7 +149,8 @@ half-finished changes.
 1. Read `.reports/example-health.json` for what was green last time and what was
    already looked at.
 2. `make health`.
-3. Pick the highest-value item that is red or stale **and unblocked**.
+3. Pick the highest-value item that is red or stale **and unblocked**. If nothing
+   is red and nothing is stale, take the top item from `TODO.md` instead.
 4. Fix it on a branch — see below.
 5. Re-run that project's `make test`, then the full suite.
 6. `make format`, commit, update the report, stop.
@@ -154,7 +160,7 @@ Evidence, not assertion.
 
 If a fix needs a judgement call that is not yours to make — dropping an example,
 changing what it teaches, adopting a replacement library — write the options into
-the report's `needs-decision` list and move to the next item rather than guessing.
+`TODO.md` and move to the next item rather than guessing.
 
 ## Branches and pull requests
 
@@ -230,15 +236,18 @@ Discovered the hard way; do not rediscover them.
 - Compose `extends:` does **not** copy `depends_on`, so each example declares its
   own ordering even though the service definitions are shared.
 - Prettier reflows Django template tags across newlines, which Django's lexer
-  rejects. That is what `django-ory-cloud/.prettierignore` is for.
+  rejects — it broke `base.html` twice. The **root** `.prettierignore` is what
+  protects it; prettier only reads the one in the directory it is run from, so
+  the per-project `django-ory-cloud/.prettierignore` does nothing during
+  `make format`.
 - Keto's check endpoint is `/relation-tuples/check`. The old `/check` path 404s,
   which surfaces as a 500 from Oathkeeper's `remote_json` authorizer.
 - Keto's numeric-id `namespaces:` list is gone; namespaces are defined in OPL.
 - Modern Envoy needs an explicit `typed_config` on the router filter.
 - The Ory .NET SDK resolves a token provider for every auth scheme in the API
   description, so all three must be registered even for cookie-only flows.
-- Flutter 3.44 does not build this project — the framework's own painting library
-  fails against the `collection` version pub resolves. Pinned to 3.35.7.
+- Flutter is pinned to 3.35.7 in `flutter-ory-network/Makefile`. Do not bump it
+  casually — 3.44 does not build this project. See `TODO.md`.
 - A `prod` Ory Network project redacts courier message bodies, so anything needing
   a one-time code or recovery link has to run against a `dev` project.
 - Never reintroduce a dependency on `playground.projects.oryapis.com`. It is a
