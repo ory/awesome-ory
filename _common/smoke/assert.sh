@@ -137,11 +137,13 @@ fi
 	done
 }
 
-# A missing cookie makes the `cookie_session` authenticator decline outright,
-# which is a different code path from an invalid session. Both must deny.
+# A missing cookie and a present-but-invalid one take different code paths — the
+# `cookie_session` authenticator declines outright in the first case and rejects
+# the session in the second. Both must deny, but not always with the same status,
+# so the expectation can be overridden.
 if [ "$NEEDS_SESSION" = "1" ] && [ "$EXPECT_ANON_STATUS" != "200" ]; then
 	info "-- request with an invalid session cookie"
-	assert_eq "invalid-cookie status" "$EXPECT_ANON_STATUS" \
+	assert_eq "invalid-cookie status" "${EXPECT_INVALID_COOKIE_STATUS:-$EXPECT_ANON_STATUS}" \
 		"$(status_of -H 'Cookie: ory_kratos_session=not-a-real-session')"
 fi
 
@@ -172,6 +174,14 @@ if [ "$NEEDS_SESSION" = "1" ]; then
 			fi
 		done
 	fi
+
+	# Examples that protect more than one upstream assert each of them, so a
+	# routing change that silently collapses them to one is caught.
+	for extra in ${AUTH_EXTRA_PATHS:-}; do
+		extra_status="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 \
+			-H "Host: $ENTRY_HOST" -H "$COOKIE" "${ENTRY_INTERNAL}${extra}")"
+		assert_eq "authenticated status for $extra" "$EXPECT_AUTH_STATUS" "$extra_status"
+	done
 fi
 
 # The Keto example is only meaningful as a before/after pair: the same

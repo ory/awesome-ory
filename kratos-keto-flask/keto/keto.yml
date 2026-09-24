@@ -1,11 +1,8 @@
-version: v0.7.0-alpha.1
-
 log:
   level: debug
 
 namespaces:
-  - name: app
-    id: 1
+  location: file:///home/ory/namespaces.keto.ts
 
 serve:
   read:
@@ -14,3 +11,5 @@ serve:
   write:
     host: 0.0.0.0
     port: 4467
+
+dsn: memory

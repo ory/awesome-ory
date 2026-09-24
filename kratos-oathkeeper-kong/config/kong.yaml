@@ -1,3 +1,13 @@
-# a very minimal declarative config file
-_format_version: "2.1"
-_transform: true
+# Kong runs DB-less: this file is the whole configuration. Previously the routes
+# had to be created by hand with kong.config.sh after the stack was up, which is
+# why following the README in order used to give you a 404.
+_format_version: "3.0"
+
+services:
+  - name: secure-api
+    url: http://oathkeeper:4455
+    routes:
+      - name: protected
+        paths:
+          - /
+        strip_path: false

@@ -1,112 +1,28 @@
-version: "3.9"
-
-x-kong-config: &kong-env
-  KONG_DATABASE: postgres
-  KONG_PG_DATABASE: kong
-  KONG_PG_HOST: db
-  KONG_PG_USER: kong
-  KONG_PG_PASSWORD: kong
-
-volumes:
-  kong_data: {}
-  kong_prefix_vol:
-    driver_opts:
-      type: tmpfs
-      device: tmpfs
-  kong_tmp_vol:
-    driver_opts:
-      type: tmpfs
-      device: tmpfs
-
-networks:
-  intranet:
-    external: false
-
 services:
-  kong-migrations:
-    image: "kong:2.7.2"
-    command: kong migrations bootstrap
-    depends_on:
-      - db
-    environment:
-      <<: *kong-env
-    networks:
-      - intranet
-    restart: on-failure
-
   kong:
-    # safe image
-    image: "kong:2.7.2"
-    # both of the following two fail
-    # platform: linux/arm64
-    # image: 'arm64v8/kong'
+    image: kong:3.9
     environment:
-      <<: *kong-env
-      KONG_ADMIN_ACCESS_LOG: /dev/stdout
-      KONG_ADMIN_ERROR_LOG: /dev/stderr
-      KONG_PROXY_LISTEN: "${KONG_PROXY_LISTEN:-0.0.0.0:8000}"
-      KONG_ADMIN_LISTEN: "${KONG_ADMIN_LISTEN:-0.0.0.0:8001}"
-      KONG_PROXY_ACCESS_LOG: /dev/stdout
-      KONG_PROXY_ERROR_LOG: /dev/stderr
-      KONG_PREFIX: ${KONG_PREFIX:-/var/run/kong}
-      KONG_DECLARATIVE_CONFIG: "/opt/kong/kong.yaml"
-    networks:
-      - intranet
-    ports:
-      # The following two environment variables default to an insecure value (0.0.0.0)
-      # according to the CIS Security test.
-      - "${KONG_INBOUND_PROXY_LISTEN:-0.0.0.0}:8000:8000/tcp"
-      - "${KONG_INBOUND_SSL_PROXY_LISTEN:-0.0.0.0}:8443:8443/tcp"
-      - "127.0.0.1:8001:8001/tcp"
-      - "127.0.0.1:8444:8444/tcp"
-    healthcheck:
-      test: ["CMD", "kong", "health"]
-      interval: 10s
-      timeout: 10s
-      retries: 10
-    restart: on-failure:5
-    read_only: true
+      - KONG_DATABASE=off
+      - KONG_DECLARATIVE_CONFIG=/kong/kong.yaml
+      - KONG_PROXY_ACCESS_LOG=/dev/stdout
+      - KONG_ADMIN_ACCESS_LOG=/dev/stdout
+      - KONG_PROXY_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001
     volumes:
-      - kong_prefix_vol:${KONG_PREFIX:-/var/run/kong}
-      - kong_tmp_vol:/tmp
-      - ./config:/opt/kong
-    security_opt:
-      - no-new-privileges
-
-  db:
-    image: postgres:9.6
-    environment:
-      POSTGRES_DB: kong
-      POSTGRES_USER: kong
-      POSTGRES_PASSWORD: kong
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "kong"]
-      interval: 30s
-      timeout: 30s
-      retries: 3
-    restart: on-failure
-    networks:
-      - intranet
-
-  hello:
-    build:
-      context: hello
-    networks:
-      - intranet
-
-  world:
-    build:
-      context: world
+      - ./config/kong.yaml:/kong/kong.yaml:ro
+    depends_on:
+      - oathkeeper
+    ports:
+      - "8000:8000"
+      - "8001:8001"
     networks:
       - intranet
 
   oathkeeper:
-    image: oryd/oathkeeper:v0.38
+    image: oryd/oathkeeper:v26.2.0
     depends_on:
       - kratos
-    ports:
-      - 8080:4455
-      - 4456:4456
     command: serve proxy -c "/etc/config/oathkeeper/oathkeeper.yml"
     environment:
       - LOG_LEVEL=debug
@@ -115,63 +31,49 @@ services:
       - intranet
     volumes:
       - ./oathkeeper:/etc/config/oathkeeper
-  postgres-kratos:
-    image: postgres:9.6
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=kratos
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=kratos
+
+  hello:
+    build:
+      context: "../_common/hello"
     networks:
       - intranet
+
+  world:
+    build:
+      context: "../_common/hello"
+    networks:
+      - intranet
+
+  postgres-kratos:
+    extends:
+      file: ../_common/docker-compose.yml
+      service: postgres-kratos
 
   kratos-migrate:
-    image: oryd/kratos:v0.8.0-alpha.3
-    links:
-      - postgres-kratos:postgres-kratos
-    environment:
-      - DSN=postgres://kratos:secret@postgres-kratos:5432/kratos?sslmode=disable&max_conns=20&max_idle_conns=4
-    networks:
-      - intranet
-    volumes:
-      - type: bind
-        source: ./kratos
-        target: /etc/config/kratos
-    command: -c /etc/config/kratos/kratos.yml migrate sql -e --yes
+    extends:
+      file: ../_common/docker-compose.yml
+      service: kratos-migrate
+    depends_on:
+      postgres-kratos:
+        condition: service_healthy
 
   kratos:
-    image: oryd/kratos:v0.8.0-alpha.3
-    links:
-      - postgres-kratos:postgres-kratos
-    environment:
-      - DSN=postgres://kratos:secret@postgres-kratos:5432/kratos?sslmode=disable&max_conns=20&max_idle_conns=4
-    ports:
-      - "4433:4433"
-      - "4434:4434"
-    volumes:
-      - type: bind
-        source: ./kratos
-        target: /etc/config/kratos
-    networks:
-      - intranet
-    command: serve -c /etc/config/kratos/kratos.yml --dev --watch-courier
+    extends:
+      file: ../_common/docker-compose.yml
+      service: kratos
+    depends_on:
+      kratos-migrate:
+        condition: service_completed_successfully
 
   kratos-selfservice-ui-node:
-    image: oryd/kratos-selfservice-ui-node:v0.8.0-alpha.3
-    environment:
-      - KRATOS_PUBLIC_URL=http://kratos:4433/
-      - KRATOS_BROWSER_URL=http://127.0.0.1:4433/
-    networks:
-      - intranet
-    ports:
-      - "4455:3000"
-    restart: on-failure
+    extends:
+      file: ../_common/docker-compose.yml
+      service: kratos-selfservice-ui-node
 
-  mailslurper:
-    image: oryd/mailslurper:latest-smtps
-    ports:
-      - "4436:4436"
-      - "4437:4437"
-    networks:
-      - intranet
+  mailpit:
+    extends:
+      file: ../_common/docker-compose.yml
+      service: mailpit
+
+networks:
+  intranet:
