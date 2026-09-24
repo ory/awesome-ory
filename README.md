@@ -7,7 +7,7 @@ An awesome list of the [Ory ecosystem](https://www.ory.com/ory-ecosystem). Ory p
 [![Docs](https://img.shields.io/badge/docs-ory.com-%233B4B6C "Ory Documentation")](https://ory.com/docs)
 [![Docs](https://img.shields.io/badge/chat-slack.ory.com-%234B1B6C "Ory Community Slack")](https://slack.ory.com/)
 
-If you have any questions or suggestions [open a discussion](https://github.com/ory/examples/discussions), or join the [Ory Chat](https://slack.ory.com/)!
+If you have any questions or suggestions [open a discussion](https://github.com/ory/awesome-ory/discussions), or join the [Ory Chat](https://slack.ory.com/)!
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for pointers on how to contribute.
 

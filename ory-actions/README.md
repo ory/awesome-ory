@@ -22,15 +22,15 @@ For more information on Ory Actions please refer to the
 
 ## Ory Actions Examples
 
-- [Ory Action to check IP addresses against vpnapi.io](https://github.com/ory/examples/tree/master/ory-actions/vpncheck-py)
+- [Ory Action to check IP addresses against vpnapi.io](https://github.com/ory/awesome-ory/tree/master/ory-actions/vpncheck-py)
 - more coming soon..
 
 ## Contribute
 
 Feel free to
-[open a discussion](https://github.com/ory/examples/discussions/new) to provide
+[open a discussion](https://github.com/ory/awesome-ory/discussions/new) to provide
 feedback or talk about ideas, or
-[open an issue](https://github.com/ory/examples/issues/new) if you want to add
+[open an issue](https://github.com/ory/awesome-ory/issues/new) if you want to add
 your example to the repository or encounter a bug. You can contribute to Ory in
 many ways, see the
 [Ory Contributing Guidelines](https://www.ory.com/docs/ecosystem/contributing)

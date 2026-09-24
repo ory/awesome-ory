@@ -1,7 +1,8 @@
 # Flask App using Ory Kratos and Ory Keto
 
-This example integrates [Ory Kratos](https://www.ory.com/kratos/docs/quickstart/)
-and [Ory Keto](https://www.ory.com/keto/docs/quickstart/) in a flask application.
+This example integrates [Ory Kratos](https://www.ory.com/docs/kratos) and
+[Ory Keto](https://www.ory.com/docs/keto) in a Flask application: Kratos answers
+_who is this_, and Keto answers _are they allowed_.
 
 Follow the tutorial based on this code:
 
@@ -9,221 +10,77 @@ Follow the tutorial based on this code:
 
 ## Overview
 
-![Architecture Overview](https://mermaid.ink/img/pako:eNptkktOIzEQhq9S8iojMSIShIUXSIjHCM2CRZRdS1CyK2kraVeP7RYKCGkuMIs5AbsR7DgTJ-AIlNsN0ZB4U9Xu7__rId8rw5aUVpF-deQNnTlcBGwqD3JaDMkZ16JP0EUKgBFmEiOM3h7_Pr3-_vP2-O9F0uch_batWwZMHGeXWfuzz0E-RvrwcDLZgQ_IJ5zBg4Md4HyFcZm5iz4Z6cl4PN5lSIl7uxyz29GRUIXLM30_Pu6tNFy15AGh5oZaXFBBcJVg6hYeLv1-jrO23OfT6zb6H5TghsP6uox8HSlGx_4GDPPS0bauTFiEzpJPLq0hBXQpwjxwA_u3NWPjgLxt2flULGgVCbBLdVYYTGSHe283PZ8YI-XhlH0KvNpRW9ahwdRkZImFlf2I55f5P4txcHdblQa3vEcN05pvY29hpKo0Bzz_zzErim7TTz5qTzUUGnRWHuJ9_lcp0TVUKS2pxbCsVOUfhOtaKwOfW5c4KD1H6W5PSXs8XXujdAodfUDDSx6oh3d7rfx0)
+The home page does two checks on every request:
 
-A docker volume `node-modules` is created to store NPM packages and is reused
-across the dev and prod versions of the application. For the purposes of DB
-testing with `sqlite`, the file `dev.db` is mounted to all containers. This
-volume mount should be removed from `docker-compose.yml` if a production DB
-server is used.
+1. It forwards the visitor's `ory_kratos_session` cookie to Kratos'
+   `/sessions/whoami`. Without a session, the visitor is sent to the login UI.
+2. It asks Keto whether that identity has the `read` relation on the `homepage`
+   object. Without the relation tuple, the visitor gets a 403.
+
+The second step is the point of the example. Being signed in is not the same as
+being allowed, so a freshly registered identity is refused until a tuple grants
+it access.
+
+The permission subject is the Kratos identity ID. Note that it is deliberately
+_not_ the email address: identities can change their email, and a permission
+that silently follows an address is a permission you cannot reason about.
 
 ## Develop
 
 ### Prerequisites
 
-- [Ory Keto](https://www.ory.com/docs/keto/install) as an access control service.
-- [Ory Kratos](https://www.ory.com/docs/kratos/install) with UI to authenticate
-  users.
-- [PostgreSQL](https://www.postgresql.org/download/) as an RDBMS.
-- [Flask cookiecutter](https://github.com/cookiecutter-flask/cookiecutter-flask)
-  to bootstrap the project structure.
+- [Docker](https://docs.docker.com/get-docker/) with Compose v2.
 
-This app can be run completely using `Docker` and `docker-compose`. **Using
-Docker is recommended, as it guarantees the application is run using compatible
-versions of Python and Node**.
-
-### Environmental Variables
-
-The list of `environment:` variables in the `docker-compose.yml` file takes
-precedence over any variables specified in `.env`.
+Everything else — Kratos, Keto, Postgres, the self-service UI and a mail
+catcher — comes from `docker-compose.yml` and the shared services in
+[`_common`](../_common).
 
 ### Run locally
 
-#### Using Docker
+```bash
+git clone git@github.com:ory/awesome-ory
+cd awesome-ory/kratos-keto-flask
+docker compose --profile ui up --build
+```
 
-To run the development version of the app
+The `ui` profile adds Ory's self-service UI on
+[127.0.0.1:4455](http://127.0.0.1:4455) and the mail catcher on
+[127.0.0.1:8025](http://127.0.0.1:8025); leave it off if you only want the API.
+
+1. Register an account at [127.0.0.1:4455](http://127.0.0.1:4455).
+2. Open [127.0.0.1:5001](http://127.0.0.1:5001). You are signed in, and refused
+   with a 403 — Keto has no tuple for you yet.
+3. Grant yourself access, using the identity ID the app shows you:
+
+   ```bash
+   curl -X PUT http://127.0.0.1:4467/admin/relation-tuples \
+     -H 'Content-Type: application/json' \
+     -d '{"namespace":"app","object":"homepage","relation":"read","subject_id":"<your-identity-id>"}'
+   ```
+
+4. Reload. You are in.
+
+The permission model itself lives in
+[`keto/namespaces.keto.ts`](keto/namespaces.keto.ts), written in
+[Ory Permission Language](https://www.ory.com/docs/keto/reference/ory-permission-language).
+
+### Run tests
 
 ```bash
-docker-compose up
+make test
 ```
 
-Go to `http://localhost:8080`. You will see a pretty welcome screen.
-
-To run any commands use the `Flask CLI`
-
-```bash
-docker-compose run --rm manage <<COMMAND>>
-```
-
-For example, to initialize a database you would run
-
-```bash
-docker-compose run --rm manage db init
-docker-compose run --rm manage db migrate
-docker-compose run --rm manage db upgrade
-```
-
-#### Without Docker
-
-Run the following commands to bootstrap your environment if you are unable to
-run the application using Docker
-
-```bash
-cd examples/kratos-keto-flask
-pipenv install --dev
-pipenv shell
-FLASK_APP=autoapp flask run
-```
-
-Go to `http://localhost:8080`. You will see a pretty welcome screen.
-
-#### Database Initialization (locally)
-
-Once you have installed your DBMS, run the following to create your app's
-database tables and perform the initial migration:
-
-```bash
-flask db init
-flask db migrate
-flask db upgrade
-```
-
-#### Shell
-
-To open the interactive shell, run
-
-```bash
-docker-compose run --rm manage db shell  # If running with Docker
-flask shell # If running locally without Docker
-```
-
-By default, you will have access to the flask `app`.
-
-#### Troubleshooting Windows
-
-You may have this error running this example on windows because of missing
-`greenlet` and `colorama` packages:
-
-```bash
-pkg_resources.DistributionNotFound: The 'greenlet!=0.4.17; python_version >= "3" and (platform_machine == "aarch64" or (platform_machine == "ppc64le" or (platform_machine == "x86_64" or (platform_machine == "amd64" or (platform_machine == "AMD64" or (platform_machine == "win32" or platform_machine == "WIN32"))))))' distribution was not found and is required by SQLAlchemy
-```
-
-You can fix it by running:
-
-```bash
-pipenv shell
-pip install greenlet colorama
-```
-
-## Run Tests
-
-To run all tests, run
-
-```bash
-docker-compose run --rm manage test
-flask test # If running locally without Docker
-```
-
-To run the linter, run
-
-```bash
-docker-compose run --rm manage lint
-flask lint # If running locally without Docker
-```
-
-The `lint` command will attempt to fix any linting/style errors in the code. If
-you only want to know if the code will pass CI and do not wish for the linter to
-make changes, add the `--check` argument.
-
-## Deploy
-
-When using Docker, reasonable production defaults are set in
-`docker-compose.yml`
-
-```text
-FLASK_ENV=production
-FLASK_DEBUG=0
-```
-
-Therefore, starting the app in "production" mode is as simple as
-
-```bash
-docker-compose up flask-prod
-```
-
-If running without Docker
-
-```bash
-export FLASK_ENV=production
-export FLASK_DEBUG=0
-export DATABASE_URL="<YOUR DATABASE URL>"
-npm run build   # build assets with webpack
-flask run       # start the flask server
-```
-
-## Migrations
-
-Whenever a database migration needs to be made. Run the following commands
-
-```bash
-docker-compose run --rm manage db migrate
-flask db migrate # If running locally without Docker
-```
-
-This will generate a new migration script. Then run
-
-```bash
-docker-compose run --rm manage db upgrade
-flask db upgrade # If running locally without Docker
-```
-
-To apply the migration.
-
-For a full migration command reference, run
-`docker-compose run --rm manage db --help`.
-
-If you will deploy your application remotely (e.g on Heroku) you should add the
-`migrations` folder to version control. You can do this after `flask db migrate`
-by running the following commands
-
-```bash
-git add migrations/*
-git commit -m "Add migrations"
-```
-
-Make sure folder `migrations/versions` is not empty.
-
-## Asset Management
-
-Files placed inside the `assets` directory and its subdirectories (excluding
-`js` and `css`) will be copied by webpack's `file-loader` into the
-`static/build` directory. In production, the plugin `Flask-Static-Digest` zips
-the webpack content and tags them with a MD5 hash. As a result, you must use the
-`static_url_for` function when including static content, as it resolves the
-correct file name, including the MD5 hash. For example
-
-```html
-<link
-  rel="shortcut icon"
-  href="{{static_url_for('static', filename='build/img/favicon.ico') }}"
-/>
-```
-
-If all of your static files are managed this way, then their filenames will
-change whenever their contents do, and you can ask Flask to tell web browsers
-that they should cache all your assets forever by including the following line
-in `.env`:
-
-```text
-SEND_FILE_MAX_AGE_DEFAULT=31556926  # one year
-```
+This brings the stack up and asserts the whole story end to end: anonymous
+visitors are redirected, an invalid session is refused, a valid session is still
+refused until the relation tuple is written, and allowed once it is. It needs no
+credentials and no browser.
 
 ## Contribute
 
 Feel free to
-[open a discussion](https://github.com/ory/examples/discussions/new) to provide
+[open a discussion](https://github.com/ory/awesome-ory/discussions/new) to provide
 feedback or talk about ideas, or
-[open an issue](https://github.com/ory/examples/issues/new) if you want to add
+[open an issue](https://github.com/ory/awesome-ory/issues/new) if you want to add
 your example to the repository or encounter a bug. You can contribute to Ory in
 many ways, see the
 [Ory Contributing Guidelines](https://www.ory.com/docs/ecosystem/contributing)

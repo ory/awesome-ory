@@ -46,8 +46,7 @@ services:
       - intranet
     command: serve -c /etc/config/kratos/kratos.yml --dev --watch-courier
     healthcheck:
-      test:
-        ["CMD", "wget", "-qO-", "http://127.0.0.1:4433/health/ready"]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:4433/health/ready"]
       interval: 2s
       timeout: 3s
       retries: 60

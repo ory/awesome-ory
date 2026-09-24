@@ -113,8 +113,7 @@
           aria-label="Close"
         ></button>
       </div>
-      {% endfor %} {% endif %} {% block content %}
-      {% if request.user.is_authenticated %}
+      {% endfor %} {% endif %} {% block content %} {% if request.user.is_authenticated %}
       <h1>You are signed in</h1>
       <p>
         Ory resolved this page's session cookie to an identity. The session is
@@ -129,8 +128,7 @@
       {% else %}
       <h1>You are not signed in</h1>
       <p id="anonymous-notice">Sign up or sign in to see your Ory session.</p>
-      {% endif %}
-      {% endblock content %}
+      {% endif %} {% endblock content %}
     </div>
     <!-- /container -->
 

@@ -11,12 +11,17 @@ FLUTTER := docker run --rm \
 	-w /app -e PUB_CACHE=/pub-cache \
 	$(FLUTTER_IMAGE) sh -c
 
+# .env is gitignored but declared as a bundled asset, so the build needs one to
+# exist. The values only matter when the app actually talks to Ory.
+.env:
+	cp .env.example .env
+
 .PHONY: test
-test:
+test: .env
 	@$(FLUTTER) 'git config --global --add safe.directory /sdks/flutter >/dev/null 2>&1; \
 		flutter pub get >/dev/null && flutter test'
 
 .PHONY: analyze
-analyze:
+analyze: .env
 	@$(FLUTTER) 'git config --global --add safe.directory /sdks/flutter >/dev/null 2>&1; \
 		flutter pub get >/dev/null && flutter analyze'

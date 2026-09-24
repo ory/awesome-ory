@@ -1,7 +1,7 @@
 {
-  "started": "2026-09-24T16:30:22Z",
-  "finished": "2026-09-24T16:32:16Z",
-  "commit": "44921b8",
+  "started": "2026-09-24T16:55:45Z",
+  "finished": "2026-09-24T16:57:57Z",
+  "commit": "b51b118",
   "projects": [
     {
       "project": "oathkeeper/01-basic",
@@ -57,6 +57,18 @@
     },
     {
       "project": "kratos-keto-flask",
+      "status": "pass"
+    },
+    {
+      "project": "django-ory-cloud",
+      "status": "pass"
+    },
+    {
+      "project": "dotnet-ory-network",
+      "status": "pass"
+    },
+    {
+      "project": "flutter-ory-network",
       "status": "pass"
     },
     {

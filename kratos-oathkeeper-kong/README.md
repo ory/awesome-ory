@@ -9,7 +9,7 @@ Read the tutorial on the Ory blog:
 
 ## Overview
 
-- A simple Go HTTP API that exposes `/greet` endpoint and listens `:8090` port.
+- Two simple Go HTTP services that echo the request headers they received and listen on `:8090`.
 - [Ory Oathkeeper](https://www.ory.com/docs/oathkeeper/install) as Zero Trust
   Identity Access Proxy.
 - [Ory Kratos](https://www.ory.com/docs/kratos/install) to manage identities and
@@ -58,19 +58,26 @@ the following ports:
 
 ## Configuring Kong
 
+Kong runs DB-less and reads its routes from `config/kong.yaml`, so the
+`secure-api` service and its route exist as soon as the stack is up. That file creates a
+reverse proxy for Ory Oathkeeper.
+
+### Run tests
+
 ```bash
-bash kong.config.sh
+make test
 ```
 
-That command creates an `/greet` endpoint on `secure-api` service and creates a
-reverse proxy for Ory Oathkeeper.
+This brings the stack up, asserts the behaviour this example demonstrates, and
+tears it down again. It needs no credentials and no browser: the test mints a
+real Ory session with `curl` and replays it against the proxy.
 
 ## Contribute
 
 Feel free to
-[open a discussion](https://github.com/ory/examples/discussions/new) to provide
+[open a discussion](https://github.com/ory/awesome-ory/discussions/new) to provide
 feedback or talk about ideas, or
-[open an issue](https://github.com/ory/examples/issues/new) if you want to add
+[open an issue](https://github.com/ory/awesome-ory/issues/new) if you want to add
 your example to the repository or encounter a bug. You can contribute to Ory in
 many ways, see the
 [Ory Contributing Guidelines](https://www.ory.com/docs/ecosystem/contributing)
