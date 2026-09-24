@@ -12,6 +12,7 @@ set -Eeuo pipefail
 
 JAR="$(mktemp)"
 FAILURES=0
+SESSION_COOKIE="ory_kratos_session"
 
 pass() { printf '  \033[32mok\033[0m   %s\n' "$*"; }
 fail() {
@@ -83,12 +84,12 @@ mint_session() {
 			'{method: "password", csrf_token: $c, "traits.email": $e, password: $p}')" \
 		>/dev/null
 
-	awk '$6 == "ory_kratos_session" { print $7 }' "$JAR" | tail -n1
+	awk -v name="$SESSION_COOKIE" '$6 == name { print $7 }' "$JAR" | tail -n1
 }
 
 # --------------------------------------------------------------------- run --
 
-if [ "$NEEDS_SESSION" = "1" ]; then
+if [ "$NEEDS_SESSION" = "1" ] && [ -z "${SESSION_COOKIE_VALUE:-}" ]; then
 	wait_for "$KRATOS_INTERNAL_URL/health/ready"
 fi
 wait_for "${READY_URL:-$ENTRY_INTERNAL}"
@@ -149,12 +150,16 @@ fi
 
 if [ "$NEEDS_SESSION" = "1" ]; then
 	info "-- authenticated request"
-	SESSION="$(mint_session)"
+	# The Ory Network lane mints the session on the host, against the tunnel,
+	# and passes it in rather than having this container reach Kratos directly.
+	SESSION="${SESSION_COOKIE_VALUE:-$(mint_session)}"
 	[ -n "$SESSION" ] || {
 		echo "could not mint a Kratos session cookie" >&2
 		exit 1
 	}
-	COOKIE="Cookie: ory_kratos_session=$SESSION"
+	# Self-hosted Kratos calls the cookie ory_kratos_session; Ory Network names
+	# it after the project slug, so the caller can override the name.
+	COOKIE="Cookie: ${SESSION_COOKIE_NAME:-$SESSION_COOKIE}=$SESSION"
 
 	assert_eq "authenticated status" "$EXPECT_AUTH_STATUS" "$(status_of -H "$COOKIE")"
 

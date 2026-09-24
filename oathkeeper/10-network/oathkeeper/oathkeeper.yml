@@ -30,7 +30,7 @@ errors:
     redirect:
       enabled: true
       config:
-        to: http://127.0.0.1:4000/.ory/ui/login
+        to: http://127.0.0.1:4000/ui/login
         when:
           - error:
               - unauthorized
@@ -58,7 +58,7 @@ authenticators:
   cookie_session:
     enabled: true
     config:
-      check_session_url: http://host.docker.internal:4000/.ory/sessions/whoami
+      check_session_url: http://host.docker.internal:4000/sessions/whoami
       preserve_path: true
       extra_from: "@this"
       subject_from: "identity.id"

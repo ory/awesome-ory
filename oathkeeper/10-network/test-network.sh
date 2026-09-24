@@ -2,16 +2,22 @@
 # Copyright © 2026 Ory Corp
 # SPDX-License-Identifier: Apache-2.0
 #
-# The Ory Network lane for this example. Unlike the self-hosted examples this
-# one needs a real project, because what it demonstrates is Oathkeeper checking
+# The Ory Network lane for this example. Unlike the self-hosted examples this one
+# needs a real project, because what it demonstrates is Oathkeeper checking
 # sessions through the Ory tunnel.
 #
 #   ORY_PROJECT_ID=... ORY_PROJECT_API_KEY=... make test-network
 #
-# The project needs http://localhost:4000/ in its allowed return URLs:
+# The project needs http://localhost:4000/ among its allowed return URLs:
 #
 #   ory patch identity-config --project "$ORY_PROJECT_ID" \
-#     --replace '/selfservice/allowed_return_urls=["http://localhost:4000/"]'
+#     --add '/selfservice/allowed_return_urls/-="http://localhost:4000/"'
+#
+# Like the self-hosted lane, the stack is started with its published ports
+# stripped and the assertions run on its own Docker network, so a run does not
+# compete for a port on the host. The tunnel is the exception: it runs on the
+# host on :4000, which is where Oathkeeper's check_session_url points via
+# host.docker.internal, and where the session is minted.
 #
 # Requires: the Ory CLI, docker, curl, jq.
 
@@ -29,83 +35,101 @@ command -v ory >/dev/null || {
 	exit 0
 }
 
-TUNNEL_PORT=4000
+EXAMPLE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+COMMON_DIR="$(cd "$EXAMPLE_DIR/../../_common" && pwd)"
+PROJECT=smoke-10-network
+RUNNER_IMAGE="awesome-ory/smoke-runner"
+OVERRIDE="$(mktemp -t smoke-override-XXXXXX).yml"
+TUNNEL_PORT="${TUNNEL_PORT:-4000}"
 TUNNEL_URL="http://localhost:$TUNNEL_PORT"
 JAR="$(mktemp)"
-FAILURES=0
+TUNNEL_LOG="$(mktemp)"
 
-pass() { printf '  \033[32mok\033[0m   %s\n' "$*"; }
-fail() {
-	printf '  \033[31mFAIL\033[0m %s\n' "$*"
-	FAILURES=$((FAILURES + 1))
-}
-assert_eq() {
-	if [ "$2" = "$3" ]; then pass "$1 = $3"; else fail "$1: want '$2', got '$3'"; fi
+compose() {
+	docker compose -p "$PROJECT" -f "$EXAMPLE_DIR/docker-compose.yml" -f "$OVERRIDE" "$@"
 }
 
 cleanup() {
 	local code=$?
 	[ -n "${TUNNEL_PID:-}" ] && kill "$TUNNEL_PID" 2>/dev/null || true
-	docker compose down -v --remove-orphans >/dev/null 2>&1 || true
-	rm -f "$JAR"
+	compose down -v --remove-orphans >/dev/null 2>&1 || true
+	rm -f "$JAR" "$OVERRIDE" "$TUNNEL_LOG"
 	exit "$code"
 }
 trap cleanup EXIT
 
-echo "== 10-network =="
-docker compose up -d --build --quiet-pull
+printf '\033[1m== 10-network (Ory Network) ==\033[0m\n'
 
-# `set +x` guards nothing here, but keep the key out of the process list by
-# passing it through the environment rather than as an argument.
+docker compose -f "$EXAMPLE_DIR/docker-compose.yml" config --format json |
+	jq -r '"services:", (.services | keys[] | "  \(.):\n    ports: !override []")' \
+		>"$OVERRIDE"
+
+docker build -q -t "$RUNNER_IMAGE" "$COMMON_DIR/smoke" >/dev/null
+compose up -d --build --quiet-pull
+
+# The API key goes through the environment, never the command line, so it does
+# not show up in the process list.
 ORY_PROJECT_API_KEY="$ORY_PROJECT_API_KEY" \
-	ory tunnel --project "$ORY_PROJECT_ID" --quiet "$TUNNEL_URL" --port "$TUNNEL_PORT" &
+	ory tunnel --quiet "$TUNNEL_URL" --port "$TUNNEL_PORT" >"$TUNNEL_LOG" 2>&1 &
 TUNNEL_PID=$!
 
-deadline=$((SECONDS + 90))
-until curl -sS -o /dev/null "$TUNNEL_URL/.ory/sessions/whoami" 2>/dev/null; do
+# The tunnel mirrors Ory's APIs at the root — note there is no /.ory prefix,
+# which is an `ory proxy` convention, not a tunnel one.
+deadline=$((SECONDS + 120))
+until curl -sS -o /dev/null --max-time 5 "$TUNNEL_URL/sessions/whoami" 2>/dev/null; do
 	[ "$SECONDS" -lt "$deadline" ] || {
-		echo "timed out waiting for the Ory tunnel" >&2
+		echo "timed out waiting for the Ory tunnel on $TUNNEL_URL" >&2
+		sed -n '1,20p' "$TUNNEL_LOG" >&2
 		exit 1
 	}
 	sleep 2
 done
 
-ENTRY="http://127.0.0.1:8080/hello"
-
-assert_eq "anonymous status" "401" "$(curl -sS -o /dev/null -w '%{http_code}' "$ENTRY")"
-
-# Same trick as the self-hosted examples: drive the browser-typed registration
-# flow with Accept: application/json and read the session cookie out of the jar.
+# Same trick as the self-hosted lane: drive the browser-typed registration flow
+# with Accept: application/json and read the cookie out of the jar. Registration
+# issues a session because the project has the `session` hook after password.
+EMAIL="smoke-$RANDOM-$RANDOM@example.com"
 flow="$(curl -sS -c "$JAR" -H 'Accept: application/json' \
 	"$TUNNEL_URL/self-service/registration/browser")"
 flow_id="$(printf '%s' "$flow" | jq -r '.id')"
 csrf="$(printf '%s' "$flow" |
 	jq -r '.ui.nodes[] | select(.attributes.name == "csrf_token") | .attributes.value')"
-email="smoke-$RANDOM-$RANDOM@example.com"
 
 curl -sS -b "$JAR" -c "$JAR" \
 	-H 'Accept: application/json' -H 'Content-Type: application/json' \
 	-X POST "$TUNNEL_URL/self-service/registration?flow=$flow_id" \
-	-d "$(jq -nc --arg c "$csrf" --arg e "$email" --arg p "Ory-Smoke-Test-$RANDOM-Pw!" \
+	-d "$(jq -nc --arg c "$csrf" --arg e "$EMAIL" --arg p "Ory-Smoke-Test-$RANDOM-Pw!" \
 		'{method: "password", csrf_token: $c, "traits.email": $e, password: $p}')" \
 	>/dev/null
 
-session="$(awk '$6 == "ory_kratos_session" { print $7 }' "$JAR" | tail -n1)"
-[ -n "$session" ] || {
-	echo "could not mint a session against the project" >&2
+# Ory Network names the session cookie after the project slug
+# (ory_session_<slug>) rather than ory_kratos_session, so read whichever one the
+# project actually set instead of assuming the self-hosted name.
+SESSION_LINE="$(awk '$6 ~ /^(ory_session_|ory_kratos_session)/ { print $6, $7 }' "$JAR" | tail -n1)"
+SESSION_COOKIE_NAME="${SESSION_LINE%% *}"
+SESSION="${SESSION_LINE##* }"
+[ -n "$SESSION_COOKIE_NAME" ] && [ -n "$SESSION" ] || {
+	echo "could not mint a session against project $ORY_PROJECT_ID" >&2
+	echo "is http://localhost:4000/ among the project's allowed return URLs?" >&2
 	exit 1
 }
+echo "minted $SESSION_COOKIE_NAME for $EMAIL"
 
-assert_eq "authenticated status" "200" \
-	"$(curl -sS -o /dev/null -w '%{http_code}' -H "Cookie: ory_kratos_session=$session" "$ENTRY")"
+NETWORK="$(docker network ls \
+	--filter "label=com.docker.compose.project=$PROJECT" \
+	--format '{{.Name}}' | head -n1)"
 
-body="$(curl -sS -H "Cookie: ory_kratos_session=$session" "$ENTRY")"
-for pair in "X-User-Name=Andrew" "X-User-Company=Ory" "X-User-Role=admin"; do
-	got="$(printf '%s' "$body" | jq -r --arg h "${pair%%=*}" '.headers[$h][0] // "<absent>"')"
-	assert_eq "upstream header ${pair%%=*}" "${pair#*=}" "$got"
-done
+status=0
+docker run --rm --network "$NETWORK" \
+	--env-file "$EXAMPLE_DIR/smoke.env" \
+	-e "SESSION_COOKIE_VALUE=$SESSION" \
+	-e "SESSION_COOKIE_NAME=$SESSION_COOKIE_NAME" \
+	"$RUNNER_IMAGE" || status=$?
 
-echo "note: this run registered '$email' in project $ORY_PROJECT_ID"
+echo "note: this run registered '$EMAIL' in project $ORY_PROJECT_ID"
 
-[ "$FAILURES" -eq 0 ] || exit 1
-echo "== 10-network: all assertions passed =="
+if [ "$status" -ne 0 ]; then
+	printf '\033[1m== 10-network: FAILED ==\033[0m\n'
+	exit "$status"
+fi
+printf '\033[1m== 10-network: all assertions passed ==\033[0m\n'
