@@ -9,9 +9,9 @@ namespace ExampleApp.Controllers;
 
 public class HomeController : Controller
 {
-  private readonly IFrontendApiAsync _ory;
+  private readonly IFrontendApi _ory;
 
-  public HomeController(IFrontendApiAsync ory)
+  public HomeController(IFrontendApi ory)
   {
     _ory = ory;
   }
@@ -20,19 +20,19 @@ public class HomeController : Controller
 
   public async Task<IActionResult> Signup()
   {
-    var flow = await _ory.CreateBrowserRegistrationFlowAsync();
+    var flow = (await _ory.CreateBrowserRegistrationFlowAsync()).Ok();
     return Redirect(flow.RequestUrl);
   }
 
   public async Task<IActionResult> Login()
   {
-    var flow = await _ory.CreateBrowserLoginFlowAsync();
+    var flow = (await _ory.CreateBrowserLoginFlowAsync()).Ok();
     return Redirect(flow.RequestUrl);
   }
 
   public async Task<IActionResult> Logout()
   {
-    var flow = await _ory.CreateBrowserLogoutFlowAsync(Request.Headers["cookie"]);
+    var flow = (await _ory.CreateBrowserLogoutFlowAsync(Request.Headers.Cookie.ToString())).Ok();
     return Redirect(flow.LogoutUrl);
   }
 
