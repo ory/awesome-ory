@@ -1,8 +1,6 @@
-version: "3.7"
-
 services:
   oathkeeper:
-    image: oryd/oathkeeper:v0.40
+    image: oryd/oathkeeper:v26.2.0
     depends_on:
       - kratos
     ports:
@@ -19,7 +17,7 @@ services:
 
   hello:
     build:
-      context: "hello"
+      context: "../../_common/hello"
     networks:
       - intranet
 
@@ -32,21 +30,27 @@ services:
     extends:
       file: ../../_common/docker-compose.yml
       service: kratos-migrate
+    depends_on:
+      postgres-kratos:
+        condition: service_healthy
 
   kratos:
     extends:
       file: ../../_common/docker-compose.yml
       service: kratos
+    depends_on:
+      kratos-migrate:
+        condition: service_completed_successfully
 
   kratos-selfservice-ui-node:
     extends:
       file: ../../_common/docker-compose.yml
       service: kratos-selfservice-ui-node
 
-  mailslurper:
+  mailpit:
     extends:
       file: ../../_common/docker-compose.yml
-      service: mailslurper
+      service: mailpit
 
 networks:
   intranet:

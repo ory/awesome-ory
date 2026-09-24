@@ -1,0 +1,83 @@
+services:
+  postgres-kratos:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_USER=kratos
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=kratos
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kratos"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    networks:
+      - intranet
+
+  kratos-migrate:
+    image: oryd/kratos:v26.2.0
+    depends_on:
+      postgres-kratos:
+        condition: service_healthy
+    environment:
+      - DSN=postgres://kratos:secret@postgres-kratos:5432/kratos?sslmode=disable&max_conns=20&max_idle_conns=4
+    networks:
+      - intranet
+    volumes:
+      - type: bind
+        source: ./kratos
+        target: /etc/config/kratos
+    command: -c /etc/config/kratos/kratos.yml migrate sql -e --yes
+
+  kratos:
+    image: oryd/kratos:v26.2.0
+    depends_on:
+      kratos-migrate:
+        condition: service_completed_successfully
+    environment:
+      - DSN=postgres://kratos:secret@postgres-kratos:5432/kratos?sslmode=disable&max_conns=20&max_idle_conns=4
+    ports:
+      - "4433:4433"
+      - "4434:4434"
+    volumes:
+      - type: bind
+        source: ./kratos
+        target: /etc/config/kratos
+    networks:
+      - intranet
+    command: serve -c /etc/config/kratos/kratos.yml --dev --watch-courier
+    healthcheck:
+      test:
+        ["CMD", "wget", "-qO-", "http://127.0.0.1:4433/health/ready"]
+      interval: 2s
+      timeout: 3s
+      retries: 60
+
+  # The self-service UI and the mail catcher exist so a human can click through
+  # the example. The smoke tests never touch them, so they sit behind a profile
+  # and `docker compose up` without `--profile ui` will not pull them.
+  kratos-selfservice-ui-node:
+    image: oryd/kratos-selfservice-ui-node:v26.2.0
+    profiles: ["ui"]
+    environment:
+      - KRATOS_PUBLIC_URL=http://kratos:4433/
+      - KRATOS_BROWSER_URL=http://127.0.0.1:4433/
+      - COOKIE_SECRET=PLEASE-CHANGE-ME-I-AM-VERY-INSECURE
+      - CSRF_COOKIE_NAME=ory_csrf_ui
+      - CSRF_COOKIE_SECRET=PLEASE-CHANGE-ME-I-AM-VERY-INSECURE
+    networks:
+      - intranet
+    ports:
+      - "4455:3000"
+    restart: on-failure
+
+  mailpit:
+    image: axllent/mailpit:v1.21
+    profiles: ["ui"]
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - intranet
+
+networks:
+  intranet:
