@@ -93,12 +93,31 @@ if [ "$NEEDS_SESSION" = "1" ]; then
 fi
 wait_for "${READY_URL:-$ENTRY_INTERNAL}"
 
+# An open port is not the same as a working route. Traefik, for one, accepts
+# connections well before its Docker provider has discovered the containers and
+# answers 404 until it has. Give the edge a moment to settle before asserting,
+# but never longer than the timeout — if it stays broken, the assertions below
+# still report the real status rather than hiding it behind a hang.
+settle() {
+	local deadline=$((SECONDS + 60)) code
+	while [ "$SECONDS" -lt "$deadline" ]; do
+		code="$(status_of)"
+		case "$code" in
+		404 | 502 | 503 | 000) sleep 2 ;;
+		*) return 0 ;;
+		esac
+	done
+}
+settle
+
 # Oathkeeper's `redirect` error handler is configured with a `when:` clause that
 # only fires for `Accept: text/html`. An API client therefore gets the `json`
 # fallback instead. Both halves of that are worth asserting, so the anonymous
 # case is checked twice: once as an API client, once as a browser.
 info "-- anonymous request (API client)"
 assert_eq "anonymous status" "$EXPECT_ANON_STATUS" "$(status_of)"
+[ -n "${EXPECT_ANON_LOCATION:-}" ] &&
+	assert_contains "anonymous Location" "$EXPECT_ANON_LOCATION" "$(location_of)"
 [ -n "${EXPECT_ANON_BODY:-}" ] &&
 	assert_contains "anonymous body" "$EXPECT_ANON_BODY" "$(req)"
 
