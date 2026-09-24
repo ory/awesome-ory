@@ -13,7 +13,7 @@
   authorizer:
     handler: remote_json
     config:
-      remote: http://keto:4466/check
+      remote: http://keto:4466/relation-tuples/check
       payload: |
         {
           "subject_id": "{{ print .Subject }}",

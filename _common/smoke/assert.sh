@@ -174,6 +174,50 @@ if [ "$NEEDS_SESSION" = "1" ]; then
 	fi
 fi
 
+# The Keto example is only meaningful as a before/after pair: the same
+# authenticated identity is refused until a relation tuple grants it access.
+# The tuple has to name the identity Kratos just minted, so it is written here
+# at runtime rather than baked into a fixture.
+if [ -n "${GRANT_NAMESPACE:-}" ]; then
+	info "-- permission granted at runtime"
+	identity_id="$(curl -sS -H "Host: $ENTRY_HOST" -H "$COOKIE" \
+		"$KRATOS_INTERNAL_URL/sessions/whoami" | jq -r '.identity.id')"
+	[ -n "$identity_id" ] && [ "$identity_id" != "null" ] || {
+		echo "could not read the identity id from /sessions/whoami" >&2
+		exit 1
+	}
+
+	curl -sS -X PUT "${KETO_WRITE_URL}/admin/relation-tuples" \
+		-H 'Content-Type: application/json' \
+		-d "$(jq -nc --arg ns "$GRANT_NAMESPACE" --arg obj "$GRANT_OBJECT" \
+			--arg rel "$GRANT_RELATION" --arg sub "$identity_id" \
+			'{namespace: $ns, object: $obj, relation: $rel, subject_id: $sub}')" \
+		>/dev/null
+
+	assert_eq "authenticated status after the grant" "${EXPECT_AUTH_STATUS_AFTER_GRANT:-200}" \
+		"$(status_of -H "$COOKIE")"
+fi
+
+# Proxying a websocket is its own thing: assert that the upgrade actually
+# completes through Oathkeeper rather than just that the page loads. curl sends
+# a real handshake, and a server that accepts it answers 101.
+if [ -n "${WS_PATH:-}" ]; then
+	info "-- websocket upgrade"
+	ws_key="$(head -c 16 /dev/urandom | base64)"
+	# A successful upgrade leaves the connection open, so curl would block
+	# waiting for frames and never report a status. Read the response headers
+	# instead and let the timeout end the request.
+	ws_head="$(curl -sS -i --max-time 5 \
+		-H "Host: $ENTRY_HOST" ${COOKIE:+-H "$COOKIE"} \
+		-H 'Connection: Upgrade' -H 'Upgrade: websocket' \
+		-H 'Sec-WebSocket-Version: 13' -H "Sec-WebSocket-Key: $ws_key" \
+		"${ENTRY_INTERNAL}${WS_PATH}" 2>/dev/null || true)"
+	case "$ws_head" in
+	*"101 Switching Protocols"*) pass "websocket upgrade returned 101" ;;
+	*) fail "websocket upgrade: no 101, got '$(printf '%s' "$ws_head" | head -n1)'" ;;
+	esac
+fi
+
 # Examples whose edge proxy rewrites Oathkeeper's answer (nginx turns a 401 into
 # a 302) assert the raw decision separately, against the decision API.
 if [ -n "${DECISION_URL:-}" ]; then
