@@ -199,9 +199,26 @@ Rules: never commit `.env`; never echo an API key; never write credentials into 
 README; never `git add` a project's `.env*` except `.env.example`.
 
 A Network run registers a throwaway identity in a real project, and pointing an
-example at a project may need its `allowed_return_urls` changed. Treat that as a
-change to someone's live tenant: snapshot `ory get identity-config` first,
-restore afterwards, and do not do it unattended.
+example at a project needs `http://localhost:4000/` among its
+`allowed_return_urls`. Treat that as a change to someone's live tenant: snapshot
+`ory get identity-config --format json` first, append with
+`--add '/selfservice/allowed_return_urls/-="…"'` rather than replacing the list,
+delete the identities you created, restore with `ory update identity-config
+--file`, and confirm by re-reading. Do not do any of it unattended.
+
+Three things differ from the self-hosted lane and will mislead you if you assume
+otherwise:
+
+- **The tunnel mirrors Ory's APIs at the root.** `/sessions/whoami` and
+  `/ui/login`, _not_ `/.ory/sessions/whoami`. The `/.ory/` prefix is an
+  `ory proxy` convention; `ory proxy` is deprecated, and paths carrying that
+  prefix 404 against a tunnel.
+- **`ory tunnel` refuses `--project` when `ORY_PROJECT_API_KEY` is set.** The key
+  already scopes the tunnel. Passing both is an error, not a preference.
+- **Ory Network names the session cookie `ory_session_<slug>`**, with the slug's
+  dashes stripped — not `ory_kratos_session`. An example that copies
+  `only: [ory_kratos_session]` from a self-hosted one will never see the cookie.
+  `10-network` deliberately sets no `only:` for this reason.
 
 ## Known traps
 
@@ -222,6 +239,8 @@ Discovered the hard way; do not rediscover them.
   description, so all three must be registered even for cookie-only flows.
 - Flutter 3.44 does not build this project — the framework's own painting library
   fails against the `collection` version pub resolves. Pinned to 3.35.7.
+- A `prod` Ory Network project redacts courier message bodies, so anything needing
+  a one-time code or recovery link has to run against a `dev` project.
 - Never reintroduce a dependency on `playground.projects.oryapis.com`. It is a
   shared public project whose UI markup changes without notice, and chasing its
   selectors is what rotted the previous tests.

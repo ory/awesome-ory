@@ -36,11 +36,23 @@ Wait for a couple of seconds and open `http://127.0.0.1:8080/hello`.
 ### Run tests
 
 ```bash
+export ORY_PROJECT_ID=...      # or ORY_NETWORK_PROJECT_ID
+export ORY_PROJECT_API_KEY=... # or ORY_NETWORK_PROJECT_API_KEY
 make test-network
 ```
 
 This example needs an Ory Network project, because what it demonstrates is
 Oathkeeper checking sessions through the Ory tunnel. Plain `make test` skips it.
+
+The project needs `http://localhost:4000/` among its allowed return URLs:
+
+```bash
+ory patch identity-config --project "$ORY_PROJECT_ID" \
+  --add '/selfservice/allowed_return_urls/-="http://localhost:4000/"'
+```
+
+The run registers a throwaway `@example.com` identity in the project and prints
+its address, so remember to clean it up afterwards.
 
 ## Contribute
 
