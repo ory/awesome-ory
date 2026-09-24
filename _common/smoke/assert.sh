@@ -158,6 +158,9 @@ if [ "$NEEDS_SESSION" = "1" ]; then
 
 	assert_eq "authenticated status" "$EXPECT_AUTH_STATUS" "$(status_of -H "$COOKIE")"
 
+	[ -n "${EXPECT_AUTH_BODY:-}" ] &&
+		assert_contains "authenticated body" "$EXPECT_AUTH_BODY" "$(req -H "$COOKIE")"
+
 	if [ -n "${EXPECT_AUTH_HEADERS:-}" ]; then
 		BODY="$(req -H "$COOKIE")"
 		for pair in $EXPECT_AUTH_HEADERS; do

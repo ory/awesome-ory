@@ -25,8 +25,7 @@
     {% endblock %}
     <!-- Le javascript
     ================================================== -->
-    {# Placed at the top of the document so pages load faster with defer #} {%
-    block javascript %}
+    {# Placed at the top of the document so pages load faster with defer #} {% block javascript %}
     <!-- Vendor dependencies bundled as one file-->
     <script defer src="{% static 'js/vendors.min.js' %}"></script>
     <!-- Bootstrap JS -->
@@ -115,13 +114,27 @@
         ></button>
       </div>
       {% endfor %} {% endif %} {% block content %}
-      <p>Use this document as a way to quick start any new project.</p>
+      {% if request.user.is_authenticated %}
+      <h1>You are signed in</h1>
+      <p>
+        Ory resolved this page's session cookie to an identity. The session is
+        checked against Ory on every request — Django keeps no user of its own.
+      </p>
+      <dl>
+        <dt>Email</dt>
+        <dd id="session-email">{{ request.user.email }}</dd>
+        <dt>Identity ID</dt>
+        <dd id="session-identity-id">{{ request.user.id }}</dd>
+      </dl>
+      {% else %}
+      <h1>You are not signed in</h1>
+      <p id="anonymous-notice">Sign up or sign in to see your Ory session.</p>
+      {% endif %}
       {% endblock content %}
     </div>
     <!-- /container -->
 
-    {% block modal %}{% endblock modal %} {% block inline_javascript %} {%
-    comment %} Script tags with only code, no src (defer by default). To run
+    {% block modal %}{% endblock modal %} {% block inline_javascript %} {% comment %} Script tags with only code, no src (defer by default). To run
     with a "defer" so that you run inline code:
     <script>
       window.addEventListener("DOMContentLoaded", () => {
