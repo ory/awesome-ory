@@ -18,6 +18,7 @@ PROJECTS := \
 	kratos-keto-flask \
 	django-ory-cloud \
 	dotnet-ory-network \
+	flutter-ory-network \
 	ory-actions/vpncheck-py
 
 # The examples bind the same ports and the same Docker resources, so the suite

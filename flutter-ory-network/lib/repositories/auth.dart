@@ -9,7 +9,7 @@ import 'package:built_value/json_object.dart';
 import 'package:crypto/crypto.dart';
 import 'package:deep_collection/deep_collection.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:one_of/one_of.dart';
 import 'package:ory_client/ory_client.dart';
@@ -72,7 +72,7 @@ class AuthRepository {
   Future<String> getWebAuthCode({required String url}) async {
     try {
       final result =
-          await FlutterWebAuth.authenticate(url: url, callbackUrlScheme: 'ory');
+          await FlutterWebAuth2.authenticate(url: url, callbackUrlScheme: 'ory');
       // get return to code
       final code = Uri.parse(result).queryParameters['code'];
       if (code != null) {
