@@ -17,12 +17,12 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 WORKDIR /app
 COPY --from=build /app ./
 
-# The app talks to Ory directly. Point ORY_BASEPATH at a self-hosted Kratos, or
-# at an `ory tunnel` in front of an Ory Network project.
+# The SDK uses Docker DNS; browser redirects use the published Kratos API.
 ENV \
     APP_PORT=5286 \
     ASPNETCORE_URLS=http://+:5286 \
     ORY_BASEPATH=http://kratos:4433 \
+    ORY_BROWSER_URL=http://127.0.0.1:4433 \
     COMPlus_EnableDiagnostics=0
 
 EXPOSE 5286

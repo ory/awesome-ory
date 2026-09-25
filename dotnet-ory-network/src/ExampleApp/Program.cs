@@ -9,9 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
-// Integrate Ory Network
+// Integrate self-hosted Ory Kratos
 
-var oryBasePath = builder.Configuration.GetValue<string>("ORY_BASEPATH") ?? "http://localhost:4433";
+var oryBasePath = builder.Configuration.GetValue<string>("ORY_BASEPATH") ?? "http://127.0.0.1:4433";
 
 // The Ory SDK registers itself with the service collection and brings its own
 // HttpClient; the APIs are then injected where they are needed.

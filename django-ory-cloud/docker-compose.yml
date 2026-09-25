@@ -3,8 +3,7 @@ services:
     build:
       context: .
     environment:
-      # Self-hosted Ory. Point these at your Ory Network project instead to run
-      # the same app against the managed service.
+      # Self-hosted Ory. Network integration is deferred; see ../TODO.md.
       - ORY_SDK_URL=http://kratos:4433
       - ORY_UI_URL=http://127.0.0.1:4455
     depends_on:

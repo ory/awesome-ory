@@ -28,8 +28,8 @@ PROJECTS := \
 .PHONY: test
 test: $(addprefix test-,$(PROJECTS))  # runs the whole suite; the default gate
 
-.PHONY: test-%
-test-%:
+.PHONY: $(addprefix test-,$(PROJECTS))
+$(addprefix test-,$(PROJECTS)): test-%:
 	@$(MAKE) --no-print-directory -C $* test
 
 .PHONY: test-network

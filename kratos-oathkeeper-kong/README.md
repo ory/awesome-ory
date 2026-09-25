@@ -42,7 +42,7 @@ and does the following steps:
 #### Using docker-compose
 
 ```bash
-docker-compose up --build
+docker compose --profile ui up --build
 ```
 
 Open `http://127.0.0.1:8000/hello` in your browser and follow the login flow

@@ -22,7 +22,7 @@ For more information, please refer to
 ```bash
    git clone git@github.com:ory/awesome-ory
    cd awesome-ory/oathkeeper/11_kratos_keto
-   docker-compose up --build
+   docker compose --profile ui up --build
 ```
 
 Wait for a couple of seconds and open

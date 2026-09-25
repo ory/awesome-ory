@@ -3,9 +3,9 @@ services:
     build:
       context: src
     environment:
-      # Self-hosted Ory. Swap in an `ory tunnel` pointed at your Ory Network
-      # project to run the same app against the managed service.
+      # The SDK uses Docker DNS; browser redirects use the published API.
       - ORY_BASEPATH=http://kratos:4433
+      - ORY_BROWSER_URL=http://127.0.0.1:4433
     depends_on:
       - kratos
     ports:

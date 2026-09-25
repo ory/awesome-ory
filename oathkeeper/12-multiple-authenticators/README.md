@@ -31,7 +31,7 @@ Ory Oathkeeper Configuration: [`oathkeeper.yml`](./oathkeeper/oathkeeper.yml)
 ```bash
 git clone git@github.com:ory/awesome-ory
 cd awesome-ory/oathkeeper/03-header-mutator
-docker-compose up --build
+docker compose --profile ui up --build
 ```
 
 Wait for a couple of seconds and open `http://127.0.0.1:8080/hello`

@@ -43,12 +43,26 @@ it, but only after the toolchain is fixed. Related: `ios/Podfile` has its
 injection exactly as `LoginBloc` does, so the same `bloc_test` + `mocktail`
 pattern applies directly — this is mechanical, not hard.
 
-### The Django and .NET examples have no Ory Network lane
+### Complete the Ory Network integration before adding its test lane
 
-Both are tested against self-hosted Kratos. Both can run against Ory Network by
-pointing `ORY_SDK_URL` / `ORY_BASEPATH` at an `ory tunnel`, and the .NET one is
-literally named for it, but neither has a `make test-network`.
-`oathkeeper/10-network/test-network.sh` is the working pattern to copy.
+Ory Network support is deferred; the Django and .NET examples currently target
+self-hosted Kratos. Changing an SDK URL to point at a tunnel is not sufficient.
+
+- Django's `ory_auth/middleware.py` and `ory_auth/context.py` hardcode
+  `ory_kratos_session`. Network uses `ory_session_<slug>`, so the middleware
+  currently treats Network users as anonymous and cannot create their logout
+  flows. Forward the incoming cookie header for session and logout requests,
+  and test both cookie naming schemes.
+- For both apps, configure and verify the SDK address, browser-facing flow URLs,
+  cookie domain, and allowed return URLs against an Ory Network project.
+  .NET's `ORY_BROWSER_URL` is separate from its internal `ORY_BASEPATH`.
+- Add credentialed `make test-network` lanes that exercise registration, login,
+  session resolution, and logout, and remove the identities they create.
+  `oathkeeper/10-network/test-network.sh` provides a starting point, but its
+  identity cleanup also needs implementing before reusing it unattended.
+
+Keep the default test suite credential-free. Do not describe either app's
+Network integration as working until those flows have been verified.
 
 ### `AGENTS.md` has never had a cold run
 
