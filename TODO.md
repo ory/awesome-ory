@@ -79,6 +79,25 @@ lists only the `header` mutator, so it is never called. Either wire it into the
 rule — which would make 10 demonstrate the same thing as 04, against Ory Network
 — or drop the service. Worth deciding rather than leaving ambiguous.
 
+### Flutter's iOS `Podfile.lock` still pins the removed `flutter_web_auth`
+
+`pubspec.yaml` moved to `flutter_web_auth_2 ^5.0.0` and `sign_in_with_apple`
+to `^7.0.1`, and `android/app/src/main/AndroidManifest.xml` was updated to the
+new `com.linusu.flutter_web_auth_2.CallbackActivity`. But
+`flutter-ory-network/ios/Podfile.lock` still pins `flutter_web_auth (0.6.0)`
+and `sign_in_with_apple (0.0.1)`, with symlink paths into
+`.symlinks/plugins/flutter_web_auth/ios`.
+
+CocoaPods regenerates the lock from the Flutter plugin list, so this does not
+break a build — `pod install` resolves the right pods and rewrites the file.
+It matters because the committed lock no longer records what the project
+actually resolves, which is the same class of drift as the `pubspec.yaml` /
+`pubspec.lock` disagreement this pass fixed.
+
+Fixing it needs macOS with the iOS toolchain: `flutter pub get` then
+`pod install` in `ios/`, and commit the regenerated lock. There is no iOS lane
+in `make test`, so nothing catches it.
+
 ### `ory-actions/vpncheck-py` triplicates its logic
 
 `focsec.py`, `ipqs.py` and `vpnapi.py` are the same webhook against three
