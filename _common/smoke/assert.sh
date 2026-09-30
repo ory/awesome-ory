@@ -41,9 +41,14 @@ assert_contains() {
 # compose network). ENTRY_HOST is the Host header, which is what Oathkeeper
 # matches its access rules against — the rules all say 127.0.0.1:<port>, so the
 # two are deliberately different.
+# curl's own exit status is deliberately discarded here. A connection failure
+# still writes `000` to stdout via -w, and every caller below asserts on that
+# output — but under `set -e` a non-zero curl kills the assignment it is
+# substituted into, so `code="$(status_of)"` would abort the script before the
+# settle loop or the assertion ever saw the 000.
 req() {
 	local path="${ENTRY_PATH:-/hello}"
-	curl -sS --max-time 20 -H "Host: ${ENTRY_HOST}" "$@" "${ENTRY_INTERNAL}${path}"
+	curl -sS --max-time 20 -H "Host: ${ENTRY_HOST}" "$@" "${ENTRY_INTERNAL}${path}" || true
 }
 status_of() { req -o /dev/null -w '%{http_code}' "$@"; }
 location_of() {
@@ -72,7 +77,7 @@ mint_session() {
 	local flow flow_id csrf
 
 	flow="$(curl -sS -c "$JAR" -H 'Accept: application/json' \
-		"$KRATOS_INTERNAL_URL/self-service/registration/browser")"
+		"$KRATOS_INTERNAL_URL/self-service/registration/browser" || true)"
 	flow_id="$(printf '%s' "$flow" | jq -r '.id')"
 	csrf="$(printf '%s' "$flow" |
 		jq -r '.ui.nodes[] | select(.attributes.name == "csrf_token") | .attributes.value')"
@@ -82,7 +87,7 @@ mint_session() {
 		-X POST "$KRATOS_INTERNAL_URL/self-service/registration?flow=$flow_id" \
 		-d "$(jq -nc --arg c "$csrf" --arg e "$email" --arg p "$password" \
 			'{method: "password", csrf_token: $c, "traits.email": $e, password: $p}')" \
-		>/dev/null
+		>/dev/null || true
 
 	awk -v name="$SESSION_COOKIE" '$6 == name { print $7 }' "$JAR" | tail -n1
 }
@@ -187,7 +192,7 @@ if [ "$NEEDS_SESSION" = "1" ]; then
 	# routing change that silently collapses them to one is caught.
 	for extra in ${AUTH_EXTRA_PATHS:-}; do
 		extra_status="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 \
-			-H "Host: $ENTRY_HOST" -H "$COOKIE" "${ENTRY_INTERNAL}${extra}")"
+			-H "Host: $ENTRY_HOST" -H "$COOKIE" "${ENTRY_INTERNAL}${extra}" || true)"
 		assert_eq "authenticated status for $extra" "$EXPECT_AUTH_STATUS" "$extra_status"
 	done
 fi
@@ -198,8 +203,9 @@ fi
 # at runtime rather than baked into a fixture.
 if [ -n "${GRANT_NAMESPACE:-}" ]; then
 	info "-- permission granted at runtime"
-	identity_id="$(curl -sS -H "Host: $ENTRY_HOST" -H "$COOKIE" \
-		"$KRATOS_INTERNAL_URL/sessions/whoami" | jq -r '.identity.id')"
+	whoami="$(curl -sS -H "Host: $ENTRY_HOST" -H "$COOKIE" \
+		"$KRATOS_INTERNAL_URL/sessions/whoami" || true)"
+	identity_id="$(printf '%s' "$whoami" | jq -r '.identity.id // empty')"
 	[ -n "$identity_id" ] && [ "$identity_id" != "null" ] || {
 		echo "could not read the identity id from /sessions/whoami" >&2
 		exit 1
@@ -210,7 +216,10 @@ if [ -n "${GRANT_NAMESPACE:-}" ]; then
 		-d "$(jq -nc --arg ns "$GRANT_NAMESPACE" --arg obj "$GRANT_OBJECT" \
 			--arg rel "$GRANT_RELATION" --arg sub "$identity_id" \
 			'{namespace: $ns, object: $obj, relation: $rel, subject_id: $sub}')" \
-		>/dev/null
+		>/dev/null || {
+		echo "could not write the relation tuple to Keto at $KETO_WRITE_URL" >&2
+		exit 1
+	}
 
 	assert_eq "authenticated status after the grant" "${EXPECT_AUTH_STATUS_AFTER_GRANT:-200}" \
 		"$(status_of -H "$COOKIE")"
@@ -240,7 +249,7 @@ fi
 # a 302) assert the raw decision separately, against the decision API.
 if [ -n "${DECISION_URL:-}" ]; then
 	info "-- decision API"
-	dec_status="$(curl -sS -o /dev/null -w '%{http_code}' -H "Host: ${ENTRY_HOST}" "$DECISION_URL")"
+	dec_status="$(curl -sS -o /dev/null -w '%{http_code}' -H "Host: ${ENTRY_HOST}" "$DECISION_URL" || true)"
 	assert_eq "decision status (anonymous)" "${EXPECT_DECISION_STATUS:-401}" "$dec_status"
 	[ -n "${EXPECT_DECISION_BODY:-}" ] &&
 		assert_contains "decision body" "$EXPECT_DECISION_BODY" \
