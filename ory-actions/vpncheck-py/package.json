@@ -1,8 +1,0 @@
-{
-  "devDependencies": {
-    "@google-cloud/functions-framework": "^3.3.0"
-  },
-  "dependencies": {
-    "flask": "^0.2.10"
-  }
-}

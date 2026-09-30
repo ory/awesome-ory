@@ -33,7 +33,9 @@ SECRET_KEY = 'django-insecure-3fx5(c!77x08#37$tgh&+3@77@tci^y4e&vzwu%n0h-x$8km1c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# The app is reached by service name inside Docker and by 127.0.0.1 from the
+# host, so the allowed hosts are configurable rather than hardcoded.
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
 ORY_SDK_URL = env("ORY_SDK_URL", default="https://playground.projects.oryapis.com")
 ORY_UI_URL = env("ORY_UI_URL", default="https://playground.projects.oryapis.com/ui")
@@ -41,17 +43,11 @@ ORY_UI_URL = env("ORY_UI_URL", default="https://playground.projects.oryapis.com/
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_ory_auth',
-]
-
-AUTHENTICATION_BACKENDS = [
-    "django_ory_auth.backend.OryBackend",
+    'ory_auth',
 ]
 
 MIDDLEWARE = [
@@ -59,8 +55,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django_ory_auth.middleware.AuthenticationMiddleware',
+    'ory_auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -76,9 +71,8 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django_ory_auth.context.processor',
+                'ory_auth.context.processor',
             ],
         },
     },
@@ -101,20 +95,6 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
 
 
 # Internationalization

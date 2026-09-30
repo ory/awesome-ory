@@ -25,8 +25,7 @@ Cloud Functions, and can be adapted for different scenarios.
 To install dependencies, run e.g.
 
 ```bash
-pip3 install flask
-pip3 install google-cloud-logging
+pip3 install -r requirements.txt
 ```
 
 ### Environmental Variables
@@ -72,7 +71,7 @@ you can deploy the Action as a cloud function:
 
 ```bash
 cp focsec.py main.py # Cloud functions like a main.py, so copy the implementation you're adopting there
-gcloud functions deploy vpncheck --runtime python39 --trigger-http --allow-unauthenticated --set-env-vars BEARER_TOKEN=$SOME_SECRET_API_KEY_FOR_YOUR_WEBHOOK,VPNAPIIO_API_KEY=$VPNAPIIO_API_KEY,IPQS_API_KEY=$IPQS_API_KEY,ENABLE_CLOUD_LOGGING=true --source=.
+gcloud functions deploy vpncheck --runtime python312 --trigger-http --allow-unauthenticated --set-env-vars BEARER_TOKEN=$SOME_SECRET_API_KEY_FOR_YOUR_WEBHOOK,VPNAPIIO_API_KEY=$VPNAPIIO_API_KEY,IPQS_API_KEY=$IPQS_API_KEY,ENABLE_CLOUD_LOGGING=true --source=.
 ```
 
 Note: You may need to create a `venv` for dependencies to load correctly.
@@ -125,9 +124,9 @@ message is shown to users!
 ## Contribute
 
 Feel free to
-[open a discussion](https://github.com/ory/examples/discussions/new) to provide
+[open a discussion](https://github.com/ory/awesome-ory/discussions/new) to provide
 feedback or talk about ideas, or
-[open an issue](https://github.com/ory/examples/issues/new) if you want to add
+[open an issue](https://github.com/ory/awesome-ory/issues/new) if you want to add
 your example to the repository or encounter a bug. You can contribute to Ory in
 many ways, see the
 [Ory Contributing Guidelines](https://www.ory.com/docs/ecosystem/contributing)

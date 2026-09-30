@@ -1,9 +1,6 @@
-version: "3.7"
-
 services:
   traefik:
-    image: "traefik:v2.6"
-    container_name: "traefik"
+    image: "traefik:v3.6"
     networks:
       - intranet
     command:
@@ -19,9 +16,11 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
   oathkeeper:
-    image: oryd/oathkeeper:v0.40
+    image: oryd/oathkeeper:v26.2.0
     depends_on:
       - kratos
+    ports:
+      - 4456:4456
     command: serve proxy -c "/etc/config/oathkeeper/oathkeeper.yml"
     environment:
       - LOG_LEVEL=debug
@@ -41,17 +40,16 @@ services:
 
   hello:
     build:
-      context: "hello"
+      context: "../../_common/hello"
     networks:
       - intranet
     labels:
       - "traefik.enable=true"
-      # App settings
       - "traefik.http.routers.hello.rule=Path(`/hello`)"
       - "traefik.http.routers.hello.entrypoints=web"
-      # Attach to the oathkeeper middleware defined in oathkeeper
       - "traefik.http.routers.hello.service=hello"
       - "traefik.http.services.hello.loadbalancer.server.port=8090"
+      # Attach the forwardAuth middleware defined on the oathkeeper service.
       - "traefik.http.routers.hello.middlewares=oathkeeper@docker"
 
   postgres-kratos:
@@ -63,21 +61,27 @@ services:
     extends:
       file: ../../_common/docker-compose.yml
       service: kratos-migrate
+    depends_on:
+      postgres-kratos:
+        condition: service_healthy
 
   kratos:
     extends:
       file: ../../_common/docker-compose.yml
       service: kratos
+    depends_on:
+      kratos-migrate:
+        condition: service_completed_successfully
 
   kratos-selfservice-ui-node:
     extends:
       file: ../../_common/docker-compose.yml
       service: kratos-selfservice-ui-node
 
-  mailslurper:
+  mailpit:
     extends:
       file: ../../_common/docker-compose.yml
-      service: mailslurper
+      service: mailpit
 
 networks:
   intranet:

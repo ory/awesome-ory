@@ -29,17 +29,21 @@ def home():
     if not active:
         abort(HTTP_STATUS_FORBIDDEN)
 
-    email = response.json().get('identity', {}).get('traits', {}).get('email').replace('@', '')
+    # The identity id is the subject of the permission check. An earlier version
+    # keyed permissions off the email address with the "@" stripped out, which
+    # breaks as soon as a user changes their address and is not something to
+    # copy into your own application.
+    identity_id = response.json().get('identity', {}).get('id')
 
     # Check permissions
 
     response = requests.get(
-        f"{settings.KETO_API_READ_URL}/check",
+        f"{settings.KETO_API_READ_URL}/relation-tuples/check",
         params={
             "namespace": "app",
             "object": "homepage",
             "relation": "read",
-            "subject_id": email,
+            "subject_id": identity_id,
         }
     )
     if not response.json().get("allowed"):

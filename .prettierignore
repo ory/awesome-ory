@@ -1,0 +1,10 @@
+# Build output and dependency trees
+**/node_modules
+**/.venv
+**/.dart_tool
+**/build
+ory-actions/vpncheck-py/.venv
+
+# Prettier reflows Django template tags across newlines, which Django's
+# template lexer rejects.
+django-ory-cloud/mysite/templates

@@ -1,8 +1,6 @@
-version: "3.7"
-
 services:
   oathkeeper:
-    image: oryd/oathkeeper:v0.40
+    image: oryd/oathkeeper:v26.2.0
     ports:
       - 8080:4455
       - 4456:4456
@@ -17,7 +15,7 @@ services:
 
   hello:
     build:
-      context: "hello"
+      context: "../../_common/hello"
     networks:
       - intranet
 

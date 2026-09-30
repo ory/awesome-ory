@@ -1,0 +1,79 @@
+{
+  "started": "2026-09-25T14:21:38Z",
+  "finished": "2026-09-25T14:23:51Z",
+  "commit": "a2b12e5",
+  "projects": [
+    {
+      "project": "oathkeeper/01-basic",
+      "status": "pass"
+    },
+    {
+      "project": "oathkeeper/02-authenticators",
+      "status": "pass"
+    },
+    {
+      "project": "oathkeeper/03-header-mutator",
+      "status": "pass"
+    },
+    {
+      "project": "oathkeeper/04-hydrator-mutator",
+      "status": "pass"
+    },
+    {
+      "project": "oathkeeper/05-nginx-oathkeeper",
+      "status": "pass"
+    },
+    {
+      "project": "oathkeeper/06-nginx-hydrator",
+      "status": "pass"
+    },
+    {
+      "project": "oathkeeper/07-traefik-decision",
+      "status": "pass"
+    },
+    {
+      "project": "oathkeeper/08-envoy-header",
+      "status": "pass"
+    },
+    {
+      "project": "oathkeeper/09-oathkeeper-websockets",
+      "status": "pass"
+    },
+    {
+      "project": "oathkeeper/10-network",
+      "status": "skipped"
+    },
+    {
+      "project": "oathkeeper/11-kratos-keto",
+      "status": "pass"
+    },
+    {
+      "project": "oathkeeper/12-multiple-authenticators",
+      "status": "pass"
+    },
+    {
+      "project": "kratos-oathkeeper-kong",
+      "status": "pass"
+    },
+    {
+      "project": "kratos-keto-flask",
+      "status": "pass"
+    },
+    {
+      "project": "django-ory-cloud",
+      "status": "pass"
+    },
+    {
+      "project": "dotnet-ory-network",
+      "status": "pass"
+    },
+    {
+      "project": "flutter-ory-network",
+      "status": "pass"
+    },
+    {
+      "project": "ory-actions/vpncheck-py",
+      "status": "pass"
+    }
+  ]
+}

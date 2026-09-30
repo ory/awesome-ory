@@ -1,0 +1,48 @@
+services:
+  app:
+    build:
+      context: src
+    environment:
+      # The SDK uses Docker DNS; browser redirects use the published API.
+      - ORY_BASEPATH=http://kratos:4433
+      - ORY_BROWSER_URL=http://127.0.0.1:4433
+    depends_on:
+      - kratos
+    ports:
+      - "5286:5286"
+    networks:
+      - intranet
+
+  postgres-kratos:
+    extends:
+      file: ../_common/docker-compose.yml
+      service: postgres-kratos
+
+  kratos-migrate:
+    extends:
+      file: ../_common/docker-compose.yml
+      service: kratos-migrate
+    depends_on:
+      postgres-kratos:
+        condition: service_healthy
+
+  kratos:
+    extends:
+      file: ../_common/docker-compose.yml
+      service: kratos
+    depends_on:
+      kratos-migrate:
+        condition: service_completed_successfully
+
+  kratos-selfservice-ui-node:
+    extends:
+      file: ../_common/docker-compose.yml
+      service: kratos-selfservice-ui-node
+
+  mailpit:
+    extends:
+      file: ../_common/docker-compose.yml
+      service: mailpit
+
+networks:
+  intranet:

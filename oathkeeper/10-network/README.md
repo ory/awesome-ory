@@ -20,8 +20,8 @@ For more information, please refer to
 ### Run locally
 
 ```bash
-   git clone git@github.com:ory/examples
-   cd examples/oathkeeper/10-network
+   git clone git@github.com:ory/awesome-ory
+   cd awesome-ory/oathkeeper/10-network
 ```
 
 Change $ORY_PROJECT_SLUG in https://$ORY_PROJECT_SLUG.projects.oryapis.com in
@@ -33,12 +33,33 @@ Change $ORY_PROJECT_SLUG in https://$ORY_PROJECT_SLUG.projects.oryapis.com in
 
 Wait for a couple of seconds and open `http://127.0.0.1:8080/hello`.
 
+### Run tests
+
+```bash
+export ORY_PROJECT_ID=...      # or ORY_NETWORK_PROJECT_ID
+export ORY_PROJECT_API_KEY=... # or ORY_NETWORK_PROJECT_API_KEY
+make test-network
+```
+
+This example needs an Ory Network project, because what it demonstrates is
+Oathkeeper checking sessions through the Ory tunnel. Plain `make test` skips it.
+
+The project needs `http://localhost:4000/` among its allowed return URLs:
+
+```bash
+ory patch identity-config --project "$ORY_PROJECT_ID" \
+  --add '/selfservice/allowed_return_urls/-="http://localhost:4000/"'
+```
+
+The run registers a throwaway `@example.com` identity in the project and prints
+its address, so remember to clean it up afterwards.
+
 ## Contribute
 
 Feel free to
-[open a discussion](https://github.com/ory/examples/discussions/new) to provide
+[open a discussion](https://github.com/ory/awesome-ory/discussions/new) to provide
 feedback or talk about ideas, or
-[open an issue](https://github.com/ory/examples/issues/new) if you want to add
+[open an issue](https://github.com/ory/awesome-ory/issues/new) if you want to add
 your example to the repository or encounter a bug. You can contribute to Ory in
 many ways, see the
 [Ory Contributing Guidelines](https://www.ory.com/docs/ecosystem/contributing)
