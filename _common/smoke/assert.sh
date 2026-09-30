@@ -41,18 +41,34 @@ assert_contains() {
 # compose network). ENTRY_HOST is the Host header, which is what Oathkeeper
 # matches its access rules against — the rules all say 127.0.0.1:<port>, so the
 # two are deliberately different.
-# curl's own exit status is deliberately discarded here. A connection failure
-# still writes `000` to stdout via -w, and every caller below asserts on that
-# output — but under `set -e` a non-zero curl kills the assignment it is
-# substituted into, so `code="$(status_of)"` would abort the script before the
-# settle loop or the assertion ever saw the 000.
 req() {
 	local path="${ENTRY_PATH:-/hello}"
-	curl -sS --max-time 20 -H "Host: ${ENTRY_HOST}" "$@" "${ENTRY_INTERNAL}${path}" || true
+	curl -sS --max-time 20 -H "Host: ${ENTRY_HOST}" "$@" "${ENTRY_INTERNAL}${path}"
 }
-status_of() { req -o /dev/null -w '%{http_code}' "$@"; }
+# A transfer can fail after receiving a valid HTTP status. Map every transport
+# failure to 000 so callers can retry or report it without triggering errexit.
+http_status() {
+	local code
+	code="$(curl -sS --max-time 20 -o /dev/null -w '%{http_code}' "$@")" || code=000
+	printf '%s' "$code"
+}
+status_of() {
+	http_status -H "Host: $ENTRY_HOST" "$@" "${ENTRY_INTERNAL}${ENTRY_PATH:-/hello}"
+}
 location_of() {
 	req -o /dev/null -D - "$@" | awk 'tolower($1) == "location:" { print $2 }' | tr -d '\r'
+}
+
+# Run in the parent shell so a failed transfer increments the real failure
+# count. Never assert against a partial body or partially received headers.
+assert_response_contains() {
+	local label="$1" expected="$2" response
+	shift 2
+	if response="$("$@")"; then
+		assert_contains "$label" "$expected" "$response"
+	else
+		fail "$label: HTTP transfer failed"
+	fi
 }
 
 wait_for() {
@@ -77,17 +93,17 @@ mint_session() {
 	local flow flow_id csrf
 
 	flow="$(curl -sS -c "$JAR" -H 'Accept: application/json' \
-		"$KRATOS_INTERNAL_URL/self-service/registration/browser" || true)"
-	flow_id="$(printf '%s' "$flow" | jq -r '.id')"
+		"$KRATOS_INTERNAL_URL/self-service/registration/browser")" || return 1
+	flow_id="$(printf '%s' "$flow" | jq -er '.id')" || return 1
 	csrf="$(printf '%s' "$flow" |
-		jq -r '.ui.nodes[] | select(.attributes.name == "csrf_token") | .attributes.value')"
+		jq -er '.ui.nodes[] | select(.attributes.name == "csrf_token") | .attributes.value')" || return 1
 
 	curl -sS -b "$JAR" -c "$JAR" \
 		-H 'Accept: application/json' -H 'Content-Type: application/json' \
 		-X POST "$KRATOS_INTERNAL_URL/self-service/registration?flow=$flow_id" \
 		-d "$(jq -nc --arg c "$csrf" --arg e "$email" --arg p "$password" \
 			'{method: "password", csrf_token: $c, "traits.email": $e, password: $p}')" \
-		>/dev/null || true
+		>/dev/null || return 1
 
 	awk -v name="$SESSION_COOKIE" '$6 == name { print $7 }' "$JAR" | tail -n1
 }
@@ -123,20 +139,23 @@ settle
 info "-- anonymous request (API client)"
 assert_eq "anonymous status" "$EXPECT_ANON_STATUS" "$(status_of)"
 [ -n "${EXPECT_ANON_LOCATION:-}" ] &&
-	assert_contains "anonymous Location" "$EXPECT_ANON_LOCATION" "$(location_of)"
+	assert_response_contains "anonymous Location" "$EXPECT_ANON_LOCATION" location_of
 [ -n "${EXPECT_ANON_BODY:-}" ] &&
-	assert_contains "anonymous body" "$EXPECT_ANON_BODY" "$(req)"
+	assert_response_contains "anonymous body" "$EXPECT_ANON_BODY" req
 
 if [ -n "${EXPECT_ANON_BROWSER_STATUS:-}" ]; then
 	info "-- anonymous request (browser)"
 	assert_eq "anonymous browser status" "$EXPECT_ANON_BROWSER_STATUS" \
 		"$(status_of -H 'Accept: text/html')"
 	[ -n "${EXPECT_ANON_BROWSER_LOCATION:-}" ] &&
-		assert_contains "anonymous browser Location" "$EXPECT_ANON_BROWSER_LOCATION" \
-			"$(location_of -H 'Accept: text/html')"
+		assert_response_contains "anonymous browser Location" "$EXPECT_ANON_BROWSER_LOCATION" \
+			location_of -H 'Accept: text/html'
 fi
 [ -n "${EXPECT_ANON_HEADERS:-}" ] && {
-	body="$(req)"
+	body="$(req)" || {
+		fail "anonymous upstream headers: HTTP transfer failed"
+		body='{}'
+	}
 	for pair in $EXPECT_ANON_HEADERS; do
 		got="$(printf '%s' "$body" | jq -r --arg h "${pair%%=*}" '.headers[$h][0] // "<absent>"')"
 		assert_eq "anonymous upstream header ${pair%%=*}" "${pair#*=}" "$got"
@@ -157,7 +176,7 @@ if [ "$NEEDS_SESSION" = "1" ]; then
 	info "-- authenticated request"
 	# The Ory Network lane mints the session on the host, against the tunnel,
 	# and passes it in rather than having this container reach Kratos directly.
-	SESSION="${SESSION_COOKIE_VALUE:-$(mint_session)}"
+	SESSION="${SESSION_COOKIE_VALUE:-$(mint_session)}" || SESSION=""
 	[ -n "$SESSION" ] || {
 		echo "could not mint a Kratos session cookie" >&2
 		exit 1
@@ -169,10 +188,13 @@ if [ "$NEEDS_SESSION" = "1" ]; then
 	assert_eq "authenticated status" "$EXPECT_AUTH_STATUS" "$(status_of -H "$COOKIE")"
 
 	[ -n "${EXPECT_AUTH_BODY:-}" ] &&
-		assert_contains "authenticated body" "$EXPECT_AUTH_BODY" "$(req -H "$COOKIE")"
+		assert_response_contains "authenticated body" "$EXPECT_AUTH_BODY" req -H "$COOKIE"
 
 	if [ -n "${EXPECT_AUTH_HEADERS:-}" ]; then
-		BODY="$(req -H "$COOKIE")"
+		BODY="$(req -H "$COOKIE")" || {
+			fail "authenticated upstream headers: HTTP transfer failed"
+			BODY='{}'
+		}
 		for pair in $EXPECT_AUTH_HEADERS; do
 			header="${pair%%=*}"
 			want="${pair#*=}"
@@ -191,8 +213,7 @@ if [ "$NEEDS_SESSION" = "1" ]; then
 	# Examples that protect more than one upstream assert each of them, so a
 	# routing change that silently collapses them to one is caught.
 	for extra in ${AUTH_EXTRA_PATHS:-}; do
-		extra_status="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 \
-			-H "Host: $ENTRY_HOST" -H "$COOKIE" "${ENTRY_INTERNAL}${extra}" || true)"
+		extra_status="$(http_status -H "Host: $ENTRY_HOST" -H "$COOKIE" "${ENTRY_INTERNAL}${extra}")"
 		assert_eq "authenticated status for $extra" "$EXPECT_AUTH_STATUS" "$extra_status"
 	done
 fi
@@ -204,8 +225,8 @@ fi
 if [ -n "${GRANT_NAMESPACE:-}" ]; then
 	info "-- permission granted at runtime"
 	whoami="$(curl -sS -H "Host: $ENTRY_HOST" -H "$COOKIE" \
-		"$KRATOS_INTERNAL_URL/sessions/whoami" || true)"
-	identity_id="$(printf '%s' "$whoami" | jq -r '.identity.id // empty')"
+		"$KRATOS_INTERNAL_URL/sessions/whoami")" || whoami=""
+	identity_id="$(printf '%s' "$whoami" | jq -r '.identity.id // empty')" || identity_id=""
 	[ -n "$identity_id" ] && [ "$identity_id" != "null" ] || {
 		echo "could not read the identity id from /sessions/whoami" >&2
 		exit 1
@@ -249,11 +270,11 @@ fi
 # a 302) assert the raw decision separately, against the decision API.
 if [ -n "${DECISION_URL:-}" ]; then
 	info "-- decision API"
-	dec_status="$(curl -sS -o /dev/null -w '%{http_code}' -H "Host: ${ENTRY_HOST}" "$DECISION_URL" || true)"
+	dec_status="$(http_status -H "Host: ${ENTRY_HOST}" "$DECISION_URL")"
 	assert_eq "decision status (anonymous)" "${EXPECT_DECISION_STATUS:-401}" "$dec_status"
 	[ -n "${EXPECT_DECISION_BODY:-}" ] &&
-		assert_contains "decision body" "$EXPECT_DECISION_BODY" \
-			"$(curl -sS -H "Host: ${ENTRY_HOST}" "$DECISION_URL")"
+		assert_response_contains "decision body" "$EXPECT_DECISION_BODY" \
+			curl -sS --max-time 20 -H "Host: ${ENTRY_HOST}" "$DECISION_URL"
 fi
 
 exit "$([ "$FAILURES" -gt 0 ] && echo 1 || echo 0)"

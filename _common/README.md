@@ -19,6 +19,11 @@ shared.
 
 ## Running one example's smoke test
 
+`make test-smoke` at the repository root tests the assertion runner itself
+against a local HTTP server in an isolated container. It checks retries and
+ensures failed transfers cannot pass because they received an expected status,
+header, or partial body. These regression tests also run as part of `make test`.
+
 ```bash
 make -C oathkeeper/03-header-mutator test   # or: _common/smoke.sh <example-dir>
 KEEP_UP=1 make -C oathkeeper/03-header-mutator test   # leave the stack running

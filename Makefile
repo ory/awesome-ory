@@ -26,7 +26,12 @@ PROJECTS := \
 .NOTPARALLEL:
 
 .PHONY: test
-test: $(addprefix test-,$(PROJECTS))  # runs the whole suite; the default gate
+test: test-smoke $(addprefix test-,$(PROJECTS))  # runs the whole suite; the default gate
+
+.PHONY: test-smoke
+test-smoke:  # regression tests for the HTTP assertion runner
+	docker build --target test -t awesome-ory/smoke-runner-tests _common/smoke
+	docker run --rm --network none awesome-ory/smoke-runner-tests
 
 .PHONY: $(addprefix test-,$(PROJECTS))
 $(addprefix test-,$(PROJECTS)): test-%:
