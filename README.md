@@ -87,6 +87,7 @@ Developer resources and forums for discussing Ory and meeting other users
 
 ### Ory ecosystem
 
+- [Single Sign-On for Four Rails Apps: Self-Hosted Ory With Docker Compose](https://www.panasiti.me/blog/rails-sso-self-hosted-ory/)
 - [Authentication Infrastructure – Using Ory Stack (Ory Kratos, Ory Hydra)](https://neutronxinnovation.com/blog/2025/01/23/authentication-infrastructure-using-ory-stack/)
 - [Open Source Authentication with Hydra and Kratos](https://blog.px.dev/open-source-auth/)
 
