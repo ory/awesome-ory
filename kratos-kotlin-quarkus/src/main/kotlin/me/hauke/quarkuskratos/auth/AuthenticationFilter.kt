@@ -39,14 +39,15 @@ class AuthenticationFilter : ContainerRequestFilter {
         // The cookie value is the session token, so it is never logged.
         LOG.info("Mmmmmh, cookie found")
 
-        val response = try {
+        try {
             kratosClient.getWhoAmI(cookie.value)
         } catch (e: WebApplicationException) {
+            // Only a rejected session means "please login". A Kratos outage
+            // should surface as an error, not look like a logged-out user.
+            if (e.response.status >= 500) throw e
             LOG.warn(e)
             throw NotAuthorizedException("please login")
         }
-
-        LOG.debug(response)
     }
 }
 

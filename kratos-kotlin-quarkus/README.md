@@ -18,7 +18,7 @@ under `methods`, registers in two steps by default, and logs out through
 
 - Creates a simple web page with Quarkus, Kotlin and Qute.
 - Secures the `/recipe` page with Ory Kratos.
-- Renders the Kratos login and registration forms itself.
+- Renders the Kratos login, registration and error pages itself.
 - Builds a custom REST client to interact with Kratos.
 
 The login and registration pages fetch their flow from Kratos on the server, so
@@ -59,9 +59,10 @@ make test
 
 This brings the stack up and drives the app the way a browser would, with
 `curl`: it signs up through the app's two-step registration form, opens
-`/recipe`, logs out, logs in through the app's login form, and checks that a
-missing or unknown flow sends the browser back to Kratos for a new one. It
-needs no credentials and no browser.
+`/recipe`, logs out with a POST, logs in through the app's login form, checks
+that a missing or unknown flow sends the browser back to Kratos for a new one,
+and that a forged CSRF token lands on the app's error page with Kratos's
+message. It needs no credentials and no browser.
 
 ## Contribute
 

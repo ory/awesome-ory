@@ -8,7 +8,8 @@ services:
       - QUARKUS_REST_CLIENT_KRATOS_URL=http://kratos:4433
       - KRATOS_BROWSER_URL=http://127.0.0.1:4433
     depends_on:
-      - kratos
+      kratos:
+        condition: service_healthy
     ports:
       - "8080:8080"
     networks:

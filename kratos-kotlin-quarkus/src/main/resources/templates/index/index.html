@@ -16,7 +16,9 @@
     <p>(You must be logged in)</p>
 </div>
 <div>
-    <a href="/auth/logout">Log out</a>
+    <form action="/auth/logout" method="POST">
+        <button type="submit">Log out</button>
+    </form>
 </div>
 {/body}
 {/include}

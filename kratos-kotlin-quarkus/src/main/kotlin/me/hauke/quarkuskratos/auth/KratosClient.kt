@@ -29,6 +29,10 @@ interface KratosClient {
     fun getWhoAmI(@CookieParam("ory_kratos_session") kratosSession: String): String
 
     @GET
+    @Path("/self-service/errors")
+    fun getFlowError(@QueryParam("id") errorId: String): KratosFlowError
+
+    @GET
     @Path("/self-service/logout/browser")
     @Throws(WebApplicationException::class)
     fun createLogoutFlow(@HeaderParam("Cookie") cookie: String?): KratosLogoutFlow
@@ -78,6 +82,20 @@ interface KratosClient {
             val id: Long,
             val text: String,
             val type: String
+        )
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class KratosFlowError(
+        val id: String,
+        val error: KratosError? = null
+    ) {
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        data class KratosError(
+            val code: Int? = null,
+            val status: String? = null,
+            val reason: String? = null,
+            val message: String? = null
         )
     }
 

@@ -55,7 +55,14 @@ submit() {
 	redirect_of "${args[@]}" "$action"
 }
 
-until curl -sS -o /dev/null --max-time 5 http://kratos:4433/health/ready 2>/dev/null; do sleep 2; done
+deadline=$((SECONDS + 180))
+until curl -sS -o /dev/null --max-time 5 http://kratos:4433/health/ready 2>/dev/null; do
+	[ "$SECONDS" -lt "$deadline" ] || {
+		echo "timed out waiting for Kratos" >&2
+		exit 1
+	}
+	sleep 2
+done
 
 printf '\033[1m%s\033[0m\n' "-- registration, in two steps, through the app's form"
 init="$(redirect_of "$KRATOS/self-service/registration/browser")"
@@ -80,7 +87,8 @@ expect_eq "/recipe with a forged session cookie" 307 \
 		-H 'Cookie: ory_kratos_session=not-a-real-session' "$APP/recipe")"
 
 printf '\033[1m%s\033[0m\n' "-- logout"
-out="$(redirect_of "$APP/auth/logout")"
+expect_eq "logout refuses a GET, which any site could link to" 405 "$(status_of "$APP/auth/logout")"
+out="$(redirect_of --data '' "$APP/auth/logout")"
 expect_in "the app sends the browser to Kratos's logout URL" "303 $KRATOS/self-service/logout?token=" "$out"
 back="$(redirect_of "${out#* }")"
 expect_eq "Kratos revokes the session and returns to the app" "303 $APP/" "$back"
@@ -100,6 +108,17 @@ expect_eq "a login page without a flow starts one" "303 $KRATOS/self-service/log
 	"$(redirect_of "$APP/auth/login")"
 expect_eq "an unknown registration flow starts a new one" "303 $KRATOS/self-service/registration/browser" \
 	"$(redirect_of "$APP/auth/registration?flow=00000000-0000-0000-0000-000000000000")"
+
+printf '\033[1m%s\033[0m\n' "-- the error page"
+# A signed-in browser is sent past the login form, so use a fresh one.
+JAR="$(mktemp)"
+init="$(redirect_of "$KRATOS/self-service/login/browser")"
+page="$(browser "${init#* }" | sed 's/name="csrf_token" value="[^"]*"/name="csrf_token" value="forged"/')"
+err="$(submit "$page" method=password "identifier=$EMAIL" "password=$PASSWORD")"
+expect_in "a forged CSRF token sends the browser to the app's error page" "303 $APP/error?id=" "$err"
+expect_in "the error page shows Kratos's message" "Cross-Site-Request-Forgery" "$(browser "${err#* }")"
+expect_in "an error Kratos no longer has still gets a page" "Something went wrong." \
+	"$(browser "$APP/error?id=00000000-0000-0000-0000-000000000000")"
 
 exit "$([ "$FAILURES" -gt 0 ] && echo 1 || echo 0)"
 SH
