@@ -191,6 +191,7 @@ to a branch and stop.** Open a PR only when asked, and never merge one.
 | `kratos-oathkeeper-kong`                | Kong in front of Oathkeeper      | OSS         | Kong is DB-less; routes live in `config/kong.yaml` |
 | `kratos-keto-flask`                     | Flask + Kratos + Keto            | OSS         | 403 before the tuple, 200 after                    |
 | `django-ory-cloud`                      | Django + the Ory SDK             | OSS         | the integration is vendored in `mysite/ory_auth`   |
+| `kratos-kotlin-quarkus`                 | a server-rendered Kratos UI      | OSS         | browser flows are driven by `smoke.extra.sh`       |
 | `dotnet-ory-network`                    | ASP.NET Core + the Ory SDK       | OSS         | Network integration is deferred; see `TODO.md`     |
 | `flutter-ory-network`                   | a native app with session tokens | OSS         | `flutter test` in a pinned container; no emulator  |
 | `ory-actions/vpncheck-py`               | an Ory Action webhook            | OSS         | vendors are mocked; never calls a paid API         |

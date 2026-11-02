@@ -1,0 +1,32 @@
+{#include base}
+{#title}Login{/title}
+{#body}
+<div>
+    <p>Welcome to Login</p>
+    <p>Flow: {flow}</p>
+    <div>{message}</div>
+    <div>
+        <form action="{action}" method="{method}">
+            {#for field in fields}
+            {#if field.type is 'hidden'}
+            <input type="hidden" name="{field.name}" value="{field.value ?: ''}">
+            {#else if field.type is 'submit'}
+            <button type="submit" name="{field.name}" value="{field.value ?: ''}">{field.label}</button>
+            {#else}
+            <div>
+                <label for="{field.id}">{field.label}</label>
+                <input type="{field.type}" name="{field.name}" id="{field.id}" value="{field.value ?: ''}"{#if field.required} required{/if}>
+                {#if field.message}
+                <div>{field.message}</div>
+                {/if}
+            </div>
+            {/if}
+            {/for}
+        </form>
+    </div>
+    <div>
+        <a href="/">Go home</a>
+    </div>
+</div>
+{/body}
+{/include}

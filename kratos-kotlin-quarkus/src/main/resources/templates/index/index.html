@@ -1,0 +1,24 @@
+{#include base}
+{#title}Welcome{/title}
+{#body}
+<div>
+    {text}
+</div>
+<div>
+    Please <a href="{kratosUrl}/self-service/login/browser">login</a>
+</div>
+<div>
+    <a href="{kratosUrl}/self-service/registration/browser">Sign up for secret recipes</a>
+</div>
+<div>
+    <p>Grandma's super secret cookie recipe</p>
+    <a href="/recipe">Get it</a>
+    <p>(You must be logged in)</p>
+</div>
+<div>
+    <form action="/auth/logout" method="POST">
+        <button type="submit">Log out</button>
+    </form>
+</div>
+{/body}
+{/include}

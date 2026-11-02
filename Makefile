@@ -17,6 +17,7 @@ PROJECTS := \
 	kratos-oathkeeper-kong \
 	kratos-keto-flask \
 	django-ory-cloud \
+	kratos-kotlin-quarkus \
 	dotnet-ory-network \
 	flutter-ory-network \
 	ory-actions/vpncheck-py
