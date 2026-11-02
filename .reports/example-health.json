@@ -1,7 +1,7 @@
 {
-  "started": "2026-09-25T14:21:38Z",
-  "finished": "2026-09-25T14:23:51Z",
-  "commit": "a2b12e5",
+  "started": "2026-11-02T18:54:29Z",
+  "finished": "2026-11-02T19:04:32Z",
+  "commit": "0badff5",
   "projects": [
     {
       "project": "oathkeeper/01-basic",
@@ -61,6 +61,10 @@
     },
     {
       "project": "django-ory-cloud",
+      "status": "pass"
+    },
+    {
+      "project": "kratos-kotlin-quarkus",
       "status": "pass"
     },
     {
