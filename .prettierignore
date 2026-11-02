@@ -8,3 +8,6 @@ ory-actions/vpncheck-py/.venv
 # Prettier reflows Django template tags across newlines, which Django's
 # template lexer rejects.
 django-ory-cloud/mysite/templates
+
+# Prettier reflows Qute section tags and rejects the ones inside attributes.
+kratos-kotlin-quarkus/src/main/resources/templates
