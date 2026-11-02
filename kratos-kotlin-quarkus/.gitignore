@@ -4,6 +4,7 @@ pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
+.flattened-pom.xml
 
 # Eclipse
 .project
@@ -37,3 +38,8 @@ nb-configuration.xml
 
 # Local environment
 .env
+
+# Plugin directory
+/.quarkus/cli/plugins/
+# TLS Certificates
+.certs/

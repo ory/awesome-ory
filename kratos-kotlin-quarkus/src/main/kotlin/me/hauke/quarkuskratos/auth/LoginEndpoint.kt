@@ -1,12 +1,13 @@
 package me.hauke.quarkuskratos.auth
 
 import io.quarkus.qute.TemplateInstance
-import javax.inject.Inject
-import javax.ws.rs.GET
-import javax.ws.rs.Path
-import javax.ws.rs.Produces
-import javax.ws.rs.QueryParam
-import javax.ws.rs.core.MediaType
+import jakarta.inject.Inject
+import jakarta.ws.rs.GET
+import jakarta.ws.rs.HeaderParam
+import jakarta.ws.rs.Path
+import jakarta.ws.rs.Produces
+import jakarta.ws.rs.QueryParam
+import jakarta.ws.rs.core.MediaType
 
 @Path("/auth/login")
 class LoginEndpoint @Inject constructor(
@@ -14,6 +15,8 @@ class LoginEndpoint @Inject constructor(
 ) {
     @GET
     @Produces(MediaType.TEXT_HTML)
-    fun login(@QueryParam("flow") flow: String): TemplateInstance =
-            loginService.login(flow)
+    fun login(
+            @QueryParam("flow") flow: String?,
+            @HeaderParam("Cookie") cookie: String?): TemplateInstance =
+            loginService.login(flow, cookie)
 }

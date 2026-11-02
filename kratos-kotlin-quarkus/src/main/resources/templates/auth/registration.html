@@ -6,21 +6,22 @@
     <p>Flow: {flow}</p>
     <div>{message}</div>
     <div>
-        <form action="{action}" method="POST">
+        <form action="{action}" method="{method}">
             {#for field in fields}
-            {#if field.name is 'csrf_token'}
-            <input type="hidden" name="csrf_token" value="{field.value}">
+            {#if field.type is 'hidden'}
+            <input type="hidden" name="{field.name}" value="{field.value ?: ''}">
+            {#else if field.type is 'submit'}
+            <button type="submit" name="{field.name}" value="{field.value ?: ''}">{field.label}</button>
             {#else}
             <div>
-                <label for="{field.id}">{field.name}</label>
-                <input type="{field.type}" name="{field.name}" id="{field.id}">
+                <label for="{field.id}">{field.label}</label>
+                <input type="{field.type}" name="{field.name}" id="{field.id}" value="{field.value ?: ''}"{#if field.required} required{/if}>
                 {#if field.message}
                 <div>{field.message}</div>
                 {/if}
             </div>
             {/if}
             {/for}
-            <button type="submit">Sign up for cookies</button>
         </form>
     </div>
     <div>

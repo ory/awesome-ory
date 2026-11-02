@@ -31,10 +31,7 @@
           "title": "Name"
         }
       },
-      "required": [
-        "email",
-        "name"
-      ],
+      "required": ["email", "name"],
       "additionalProperties": false
     }
   }
